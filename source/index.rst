@@ -8,7 +8,6 @@ Golang语法笔记
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
    docs/第1章 Go基本类型/index
    docs/第2章 Go函数/index
