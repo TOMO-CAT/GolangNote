@@ -1,37 +1,28 @@
-# GolangNote
+# Golang语法笔记
 
-#### 介绍
-Golang语法笔记
+## 说明
 
-#### 软件架构
-软件架构说明
+ReadTheDocs电子书链接：
+> https://cpp-note.readthedocs.io/zh/latest/
 
+网络不好的同学可以看下面的语雀链接（尽量同步更新）：
+> https://www.yuque.com/tomocat/txc11h/nkxcs5
 
-#### 安装教程
+## 参考书籍
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+[1] 《Go语言编程》 许式伟，吕桂华等
 
-#### 使用说明
+[2] [《Go编程时光》](http://golang.iswbm.com/en/latest/preface.html) 王炳明
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## 编写原则
 
-#### 参与贡献
+#### 1. 二八原则
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+遵循“二八原则”，记录**Golang后端开发**中百分之八十以上的知识点，避开各类奇技淫巧。
+
+#### 2. 删繁就简
+
+对于强记忆性的内容简单介绍，比如枯燥的进制转换和少用的语言特性等。
 
 
-#### 特技
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)

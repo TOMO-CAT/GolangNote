@@ -4,4 +4,4 @@
 .. toctree::
     :maxdepth: 1
 
-    Go函数
+    函数
