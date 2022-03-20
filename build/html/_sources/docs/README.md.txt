@@ -1,5 +1,9 @@
 # README
 
+## 联系方式
+
+此电子书一直都在更新中，如发现任何错漏之处可通过[Github](https://github.com/TOMO-CAT/GolangNote)或[知乎](https://www.zhihu.com/people/mian-bei-juan-da-cong)私信联系我。
+
 ## 参考书籍
 
 [1] 《Go语言编程》 许式伟，吕桂华等

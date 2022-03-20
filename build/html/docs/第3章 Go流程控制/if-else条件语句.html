@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Go条件语句 &mdash; GolangNote v1.0 文档</title>
+  <title>if-else条件语句 &mdash; GolangNote v1.0 文档</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -18,7 +18,9 @@
         <script src="../../_static/translations.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="索引" href="../../genindex.html" />
-    <link rel="search" title="搜索" href="../../search.html" /> 
+    <link rel="search" title="搜索" href="../../search.html" />
+    <link rel="next" title="goto跳转语句" href="goto%E8%B7%B3%E8%BD%AC%E8%AF%AD%E5%8F%A5.html" />
+    <link rel="prev" title="for循环语句" href="for%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -36,9 +38,30 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC1%E7%AB%A0%20Go%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/index.html">第1章 Go基本类型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC2%E7%AB%A0%20Go%E5%87%BD%E6%95%B0/index.html">第2章 Go函数</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第3章 Go流程控制</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="for%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5.html">for循环语句</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">if-else条件语句</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">条件语句写法</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">1. 普通条件语句</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">2. 添加变量初始化语句的条件语句</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">注意事项</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="goto%E8%B7%B3%E8%BD%AC%E8%AF%AD%E5%8F%A5.html">goto跳转语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="defer%E5%BB%B6%E8%BF%9F%E8%B0%83%E7%94%A8.html">defer延迟调用语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="select%E8%AF%AD%E5%8F%A5.html">select语句</a></li>
+<li class="toctree-l2"><a class="reference internal" href="switch%E9%80%89%E6%8B%A9%E8%AF%AD%E5%8F%A5.html">switch选择语句</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC4%E7%AB%A0%20Go%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/index.html">第4章 Go错误处理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC5%E7%AB%A0%20Go%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/index.html">第5章 Go面向对象</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC6%E7%AB%A0%20Go%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/index.html">第6章 Go并发编程</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC7%E7%AB%A0%20Go%E8%AF%AD%E8%A8%80%E7%89%B9%E6%80%A7/index.html">第7章 Go语言特性</a></li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
@@ -58,7 +81,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Go条件语句</li>
+          <li><a href="index.html">第3章 Go流程控制</a> &raquo;</li>
+      <li>if-else条件语句</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../_sources/docs/第3章 Go流程控制/if-else条件语句.md.txt" rel="nofollow"> 查看页面源码</a>
       </li>
@@ -68,8 +92,8 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="go">
-<h1>Go条件语句<a class="headerlink" href="#go" title="永久链接至标题"></a></h1>
+  <section id="if-else">
+<h1>if-else条件语句<a class="headerlink" href="#if-else" title="永久链接至标题"></a></h1>
 <section id="id1">
 <h2>条件语句写法<a class="headerlink" href="#id1" title="永久链接至标题"></a></h2>
 <section id="id2">
@@ -108,7 +132,10 @@
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="for%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5.html" class="btn btn-neutral float-left" title="for循环语句" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="goto%E8%B7%B3%E8%BD%AC%E8%AF%AD%E5%8F%A5.html" class="btn btn-neutral float-right" title="goto跳转语句" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

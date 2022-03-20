@@ -1,4 +1,4 @@
-# Golang byte、rune和string
+# byte、rune和string
 
 ## string
 
