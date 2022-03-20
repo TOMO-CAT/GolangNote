@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>select机制 &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC1%E7%AB%A0%20Go%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/index.html">第1章 Go基本类型</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>select机制</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第6章 Go并发编程/select机制.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="select">
+<h1>select机制<a class="headerlink" href="#select" title="永久链接至标题"></a></h1>
+<section id="id1">
+<h2>简介<a class="headerlink" href="#id1" title="永久链接至标题"></a></h2>
+<p>select在Unix时代就已经被设计出来用于监控一系列的文件句柄，一旦其中一个文件句柄发生了IO动作那么该select调用就会被返回，后来该机制也被用于实现高并发的Socket服务器程序。Go在语言层面支持select关键字，用于处理异步IO问题。</p>
+</section>
+<section id="id2">
+<h2>select使用<a class="headerlink" href="#id2" title="永久链接至标题"></a></h2>
+<p>和switch不同，select中每条case语句里都必须是一个channel操作，如果所有的case分支都未能成功执行，那么直接进入default语句。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">ch1</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="nx">ch1</span> <span class="o">&lt;-</span> <span class="mi">10</span>
+	<span class="k">select</span> <span class="p">{</span>
+	<span class="k">case</span> <span class="nx">res</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">ch1</span><span class="p">:</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;receive from ch1: &quot;</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span>
+	<span class="k">default</span><span class="p">:</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;can not receive from ch1&quot;</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">receive</span> <span class="nx">from</span> <span class="nx">ch1</span><span class="p">:</span>  <span class="mi">10</span>
+</pre></div>
+</div>
+<p>需要注意的是select语句中的case分支是随机执行的，比如下面这面例子实现了随机输出0和1的功能：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">select</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="nx">ch</span> <span class="o">&lt;-</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="k">case</span> <span class="nx">ch</span> <span class="o">&lt;-</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="p">}</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;receive from ch: &quot;</span><span class="p">,</span> <span class="o">&lt;-</span><span class="nx">ch</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">receive</span> <span class="nx">from</span> <span class="nx">ch</span><span class="p">:</span>  <span class="mi">0</span>
+<span class="nx">receive</span> <span class="nx">from</span> <span class="nx">ch</span><span class="p">:</span>  <span class="mi">0</span>
+<span class="nx">receive</span> <span class="nx">from</span> <span class="nx">ch</span><span class="p">:</span>  <span class="mi">0</span>
+<span class="nx">receive</span> <span class="nx">from</span> <span class="nx">ch</span><span class="p">:</span>  <span class="mi">1</span>
+<span class="nx">receive</span> <span class="nx">from</span> <span class="nx">ch</span><span class="p">:</span>  <span class="mi">0</span>
+<span class="nx">receive</span> <span class="nx">from</span> <span class="nx">ch</span><span class="p">:</span>  <span class="mi">0</span>
+<span class="nx">receive</span> <span class="nx">from</span> <span class="nx">ch</span><span class="p">:</span>  <span class="mi">1</span>
+<span class="nx">receive</span> <span class="nx">from</span> <span class="nx">ch</span><span class="p">:</span>  <span class="mi">0</span>
+<span class="nx">receive</span> <span class="nx">from</span> <span class="nx">ch</span><span class="p">:</span>  <span class="mi">1</span>
+<span class="nx">receive</span> <span class="nx">from</span> <span class="nx">ch</span><span class="p">:</span>  <span class="mi">0</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2>select解决超时问题<a class="headerlink" href="#id3" title="永久链接至标题"></a></h2>
+<p>golang并发编程中向已满的channel写入数据或者从空channel中读取数据会导致整个goroutine阻塞住，我们需要自己处理此类超时问题。</p>
+<p>一种简单的方法是使用default分支处理阻塞问题，当阻塞时会自动进入default分支：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">select</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="nx">ch</span> <span class="o">&lt;-</span> <span class="nx">i</span><span class="p">:</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;send to ch successfully&quot;</span><span class="p">)</span>
+		<span class="k">default</span><span class="p">:</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;ch is full&quot;</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">send</span> <span class="nx">to</span> <span class="nx">ch</span> <span class="nx">successfully</span>
+<span class="nx">send</span> <span class="nx">to</span> <span class="nx">ch</span> <span class="nx">successfully</span>
+<span class="nx">send</span> <span class="nx">to</span> <span class="nx">ch</span> <span class="nx">successfully</span>
+<span class="nx">send</span> <span class="nx">to</span> <span class="nx">ch</span> <span class="nx">successfully</span>
+<span class="nx">send</span> <span class="nx">to</span> <span class="nx">ch</span> <span class="nx">successfully</span>
+<span class="nx">ch</span> <span class="nx">is</span> <span class="nx">full</span>
+<span class="nx">ch</span> <span class="nx">is</span> <span class="nx">full</span>
+<span class="nx">ch</span> <span class="nx">is</span> <span class="nx">full</span>
+<span class="nx">ch</span> <span class="nx">is</span> <span class="nx">full</span>
+<span class="nx">ch</span> <span class="nx">is</span> <span class="nx">full</span>
+</pre></div>
+</div>
+<p>使用default分支会导致阻塞时直接退出，我们也可以通过另一个channel来实现超时退出机制：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;fmt&quot;</span>
+	<span class="s">&quot;time&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+	<span class="nx">timeout</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">bool</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+		<span class="nx">timeout</span> <span class="o">&lt;-</span> <span class="kc">true</span>
+	<span class="p">}()</span>
+
+	<span class="k">select</span> <span class="p">{</span>
+	<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">ch</span><span class="p">:</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;receive from ch successfully&quot;</span><span class="p">)</span>
+	<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">timeout</span><span class="p">:</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;timeout&quot;</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">timeout</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>new函数与make函数 &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC1%E7%AB%A0%20Go%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/index.html">第1章 Go基本类型</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>new函数与make函数</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第7章 Go语言特性/new函数与make函数.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="newmake">
+<h1>new函数与make函数<a class="headerlink" href="#newmake" title="永久链接至标题"></a></h1>
+<section id="new">
+<h2>new函数<a class="headerlink" href="#new" title="永久链接至标题"></a></h2>
+<section id="id1">
+<h3>1. 函数说明<a class="headerlink" href="#id1" title="永久链接至标题"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">new</span></code>函数接收一个类型参数，申请内存并返回指回指针，大概分为3步：</p>
+<ul class="simple">
+<li><p>分配内存</p></li>
+<li><p>设置零值</p></li>
+<li><p>返回指向该块内存的指针</p></li>
+</ul>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// The new built-in function allocates memory. The first argument is a type,</span>
+<span class="c1">// not a value, and the value returned is a pointer to a newly</span>
+<span class="c1">// allocated zero value of that type.</span>
+<span class="kd">func</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Type</span><span class="p">)</span> <span class="o">*</span><span class="nx">Type</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h3>2. 使用例子<a class="headerlink" href="#id2" title="永久链接至标题"></a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">MyBook</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Name</span>   <span class="kt">string</span>
+	<span class="nx">Author</span> <span class="kt">string</span>
+	<span class="nx">Price</span>  <span class="kt">float64</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">mb</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">MyBook</span><span class="p">)</span>
+	<span class="nx">mb</span><span class="p">.</span><span class="nx">Name</span> <span class="p">=</span> <span class="s">&quot;TOMOCAT&quot;</span>
+	<span class="nx">mb</span><span class="p">.</span><span class="nx">Author</span> <span class="p">=</span> <span class="s">&quot;CAT&quot;</span>
+	<span class="nx">mb</span><span class="p">.</span><span class="nx">Price</span> <span class="p">=</span> <span class="mi">100</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">mb</span><span class="p">)</span>
+
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出</span>
+<span class="o">&amp;</span><span class="p">{</span><span class="nx">TOMOCAT</span> <span class="nx">CAT</span> <span class="mi">100</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="make">
+<h2>make函数<a class="headerlink" href="#make" title="永久链接至标题"></a></h2>
+<section id="id3">
+<h3>1. 函数说明<a class="headerlink" href="#id3" title="永久链接至标题"></a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// The make built-in function allocates and initializes an object of type</span>
+<span class="c1">// slice, map, or chan (only). Like new, the first argument is a type, not a</span>
+<span class="c1">// value. Unlike new, make&#39;s return type is the same as the type of its</span>
+<span class="c1">// argument, not a pointer to it. The specification of the result depends on</span>
+<span class="c1">// the type:</span>
+<span class="c1">//	Slice: The size specifies the length. The capacity of the slice is</span>
+<span class="c1">//	equal to its length. A second integer argument may be provided to</span>
+<span class="c1">//	specify a different capacity; it must be no smaller than the</span>
+<span class="c1">//	length. For example, make([]int, 0, 10) allocates an underlying array</span>
+<span class="c1">//	of size 10 and returns a slice of length 0 and capacity 10 that is</span>
+<span class="c1">//	backed by this underlying array.</span>
+<span class="c1">//	Map: An empty map is allocated with enough space to hold the</span>
+<span class="c1">//	specified number of elements. The size may be omitted, in which case</span>
+<span class="c1">//	a small starting size is allocated.</span>
+<span class="c1">//	Channel: The channel&#39;s buffer is initialized with the specified</span>
+<span class="c1">//	buffer capacity. If zero, or the size is omitted, the channel is</span>
+<span class="c1">//	unbuffered.</span>
+<span class="kd">func</span> <span class="nb">make</span><span class="p">(</span><span class="nx">t</span> <span class="nx">Type</span><span class="p">,</span> <span class="nx">size</span> <span class="o">...</span><span class="nx">IntegerType</span><span class="p">)</span> <span class="nx">Type</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span></code>函数只能用于<code class="docutils literal notranslate"><span class="pre">slice</span></code>、<code class="docutils literal notranslate"><span class="pre">map</span></code>、<code class="docutils literal notranslate"><span class="pre">chan</span></code>三种类型的分配内存与初始化</p></li>
+<li><p>由于这三种类型本身就有引用语义，因此返回的也是这三种类型而不是指向它的指针</p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>2. 使用例子<a class="headerlink" href="#id4" title="永久链接至标题"></a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">varSlice</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">int</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>  <span class="c1">// 第一个数字表示长度, 第二个数字表示容量</span>
+	<span class="nx">varMap</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">)</span>
+	<span class="nx">varChan</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">varSlice</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">varMap</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">varChan</span><span class="p">)</span>
+
+	<span class="k">return</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

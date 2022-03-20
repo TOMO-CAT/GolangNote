@@ -1,0 +1,61 @@
+# Golang类型之间相互转换
+
+## string和数值类型
+
+#### 1. string和int
+
+```go
+/* string转int */
+int, err := strconv.Atoi(string)
+
+/* int转string */
+string := strconv.Itoa(int)
+```
+
+> **Warning:** In a plain [conversion](https://yourbasic.org/golang/conversions/) the value is interpreted as a Unicode code point, and the resulting string will contain the character represented by that code point, encoded in UTF-8.
+>
+> ```go
+> s := string(97) // s == "a"
+> ```
+
+#### 2. string和int64
+
+```go
+/* string转int64 */
+int64, err := strconv.ParseInt(string, 10, 64)
+
+/* int64转string */
+string := strconv.FormatInt(int64, 10)
+```
+
+#### 3. 一般数值转化成string
+
+`fmt.Sprintf`是一个将数值转化为string的通用函数，可以设置宽度、对齐方式和是否显示符号位。
+
+```go
+s := fmt.Sprintf("%+8d", 97)
+// s == "     +97" (width 8, right justify, always show sign)
+```
+
+## int和int64
+
+Golang中的int类型大小与平台相关，可能是32位或者64位，因此将int装成int64不会损失任何信息：
+
+```go
+/* int转int64 */
+var n int = 97
+m := int64(n)  // safe
+```
+
+反之，如果我们要将int64转成int，就可能存在被截断的风险：
+
+```go
+/* int64转int */
+var m int64 = 2 << 32
+n := int(m)     // truncated on machines with 32-bit ints
+fmt.Println(n)  // either 0 or 4,294,967,296
+```
+
+## Reference
+
+[1] https://yourbasic.org/golang/convert-int-to-string/

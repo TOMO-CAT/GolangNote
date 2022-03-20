@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>select语句 &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC1%E7%AB%A0%20Go%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/index.html">第1章 Go基本类型</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>select语句</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第3章 Go流程控制/select语句.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="select">
+<h1>select语句<a class="headerlink" href="#select" title="永久链接至标题"></a></h1>
+<section id="id1">
+<h2>简介<a class="headerlink" href="#id1" title="永久链接至标题"></a></h2>
+<blockquote>
+<div><p>早就Unix时代，<code class="docutils literal notranslate"><span class="pre">select</span></code>机制就已经被引入。通过调用<code class="docutils literal notranslate"><span class="pre">select()</span></code>函数来监控一系列的文件句柄，一旦其中一个文件句柄发生了IO动作，该<code class="docutils literal notranslate"><span class="pre">select()</span> </code>调用就会返回。Go直接在语言层面支持<code class="docutils literal notranslate"><span class="pre">select</span></code>关键字，用于处理异步IO问题。</p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">select</span></code>的用法和<code class="docutils literal notranslate"><span class="pre">switch</span></code>语言非常类似，但是每个<code class="docutils literal notranslate"><span class="pre">case</span></code>语句里必须是一个<code class="docutils literal notranslate"><span class="pre">channel</span></code>操作，大致的结构如下：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="k">select</span> <span class="p">{</span>
+<span class="k">case</span> <span class="o">&lt;-</span> <span class="nx">chan1</span><span class="p">:</span>
+    <span class="c1">// 如果chan1成功读到数据, 则进行该case处理语句</span>
+<span class="k">case</span> <span class="nx">chan2</span> <span class="o">&lt;-</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="c1">// 如果成功向chan2写入数据, 则进行该case处理语句</span>
+<span class="k">default</span><span class="p">:</span>
+	<span class="c1">// 如果上面都没有成功, 则进入default处理流程    </span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="case">
+<h2>case本身没有先后顺序<a class="headerlink" href="#case" title="永久链接至标题"></a></h2>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">switch</span></code>语句中的case是顺序执行的，和<code class="docutils literal notranslate"><span class="pre">select</span></code>语句不同。</p>
+</div></blockquote>
+<p>下面这个程序会随机输出0或者1，意味着两个case语句是随机执行的。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="k">for</span> <span class="nx">j</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span> <span class="p">{</span>
+		<span class="k">select</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="nx">ch</span> <span class="o">&lt;-</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="k">case</span> <span class="nx">ch</span> <span class="o">&lt;-</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="p">}</span>
+		<span class="nx">i</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">ch</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;Value received:&quot;</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出</span>
+<span class="nx">Value</span> <span class="nx">received</span><span class="p">:</span> <span class="mi">0</span>
+<span class="nx">Value</span> <span class="nx">received</span><span class="p">:</span> <span class="mi">0</span>
+<span class="nx">Value</span> <span class="nx">received</span><span class="p">:</span> <span class="mi">1</span>
+<span class="nx">Value</span> <span class="nx">received</span><span class="p">:</span> <span class="mi">0</span>
+<span class="nx">Value</span> <span class="nx">received</span><span class="p">:</span> <span class="mi">1</span>
+<span class="nx">Value</span> <span class="nx">received</span><span class="p">:</span> <span class="mi">0</span>
+<span class="nx">Value</span> <span class="nx">received</span><span class="p">:</span> <span class="mi">1</span>
+<span class="nx">Value</span> <span class="nx">received</span><span class="p">:</span> <span class="mi">0</span>
+<span class="nx">Value</span> <span class="nx">received</span><span class="p">:</span> <span class="mi">0</span>
+<span class="nx">Value</span> <span class="nx">received</span><span class="p">:</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>避免死锁<a class="headerlink" href="#id2" title="永久链接至标题"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">select</span></code>语句在执行过程中必须命中其中某一分支，如果没有命中任何一个<code class="docutils literal notranslate"><span class="pre">case</span></code>且没有写<code class="docutils literal notranslate"><span class="pre">default</span></code>语句，那么<code class="docutils literal notranslate"><span class="pre">select</span></code>就会阻塞住直到某个<code class="docutils literal notranslate"><span class="pre">case</span></code>语句被命中。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">c1</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">string</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="nx">c2</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">string</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1">// 死锁</span>
+	<span class="k">select</span> <span class="p">{</span>
+	<span class="k">case</span> <span class="nx">msg1</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">c1</span><span class="p">:</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;c1 received: &quot;</span><span class="p">,</span> <span class="nx">msg1</span><span class="p">)</span>
+	<span class="k">case</span> <span class="nx">msg2</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">c2</span><span class="p">:</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;c2 received: &quot;</span><span class="p">,</span> <span class="nx">msg2</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2>超时机制<a class="headerlink" href="#id3" title="永久链接至标题"></a></h2>
+<p>前面提到当<code class="docutils literal notranslate"><span class="pre">select</span></code>语句没有命中任何一个<code class="docutils literal notranslate"><span class="pre">case</span></code>语句且没有写<code class="docutils literal notranslate"><span class="pre">default</span></code>语句时，那么就会阻塞住。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">ch</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">int</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="k">select</span> <span class="p">{</span>
+	<span class="k">case</span> <span class="nx">i</span> <span class="o">:=</span> <span class="o">&lt;-</span><span class="nx">ch</span><span class="p">:</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;value received:&quot;</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+	<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">time</span><span class="p">.</span><span class="nx">After</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">):</span> <span class="c1">// 3秒到期后超时退出</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;timeout, quit&quot;</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出</span>
+<span class="nx">timeout</span><span class="p">,</span> <span class="nx">quit</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

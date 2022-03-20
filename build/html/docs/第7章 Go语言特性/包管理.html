@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Golang包管理 &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC1%E7%AB%A0%20Go%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/index.html">第1章 Go基本类型</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Golang包管理</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第7章 Go语言特性/包管理.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="golang">
+<h1>Golang包管理<a class="headerlink" href="#golang" title="永久链接至标题"></a></h1>
+<section id="id1">
+<h2>初始化<a class="headerlink" href="#id1" title="永久链接至标题"></a></h2>
+<p>每一个包都允许设置一个<code class="docutils literal notranslate"><span class="pre">init()</span></code>函数，当这个包被导入时，会首先执行该函数完成某些初始化操作：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">init()</span></code>函数先于<code class="docutils literal notranslate"><span class="pre">main()</span></code>函数执行</p></li>
+<li><p>包的初始化函数是深度优先的，假设包引用链为<code class="docutils literal notranslate"><span class="pre">mian</span></code>-&gt;<code class="docutils literal notranslate"><span class="pre">A</span></code>-&gt;<code class="docutils literal notranslate"><span class="pre">B</span></code>，那么首先执行<code class="docutils literal notranslate"><span class="pre">B</span></code>包的<code class="docutils literal notranslate"><span class="pre">init()</span></code>函数，再执行<code class="docutils literal notranslate"><span class="pre">A</span></code>包的<code class="docutils literal notranslate"><span class="pre">init()</span></code>函数，最后执行<code class="docutils literal notranslate"><span class="pre">main</span></code>包下的<code class="docutils literal notranslate"><span class="pre">init()</span></code>函数</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>匿名导入<a class="headerlink" href="#id2" title="永久链接至标题"></a></h2>
+<p>在Go中，如果导入一个包但是没有使用的话编译期间会报错。如果我们只是想执行包的<code class="docutils literal notranslate"><span class="pre">init()</span></code>函数，可以采用匿名导入的方式：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nx">_</span> <span class="s">&quot;foo&quot;</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>这种情况下编译时依然会将这个包编译到可执行文件中。</p>
+</div></blockquote>
+</section>
+<section id="id3">
+<h2>包导入搜寻路径<a class="headerlink" href="#id3" title="永久链接至标题"></a></h2>
+<section id="govendor">
+<h3>1. govendor<a class="headerlink" href="#govendor" title="永久链接至标题"></a></h3>
+<ul class="simple">
+<li><p>项目根目录下的<code class="docutils literal notranslate"><span class="pre">vendor</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">$GOROOT/src</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">$GOPATH/src</span></code></p></li>
+</ul>
+</section>
+<section id="go-module">
+<h3>2. go module<a class="headerlink" href="#go-module" title="永久链接至标题"></a></h3>
+<ul class="simple">
+<li><p>如果导入的包有域名，会首先<code class="docutils literal notranslate"><span class="pre">$GOPATH/pkg/mod</span></code>下找，找不到的话就联网搜索</p></li>
+<li><p>如果导入的包没有域名（比如标准库），只会到<code class="docutils literal notranslate"><span class="pre">$GOROOT</span></code>下找</p></li>
+</ul>
+</section>
+</section>
+<section id="import">
+<h2>import特殊符号<a class="headerlink" href="#import" title="永久链接至标题"></a></h2>
+<p>golang中import包涉及两个特殊符号：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.</span></code>：导入之后该包的函数和变量不需要再直接写入包名称</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_</span></code>：导入之后该包的<code class="docutils literal notranslate"><span class="pre">init()</span></code>函数被导入，但是不导入其他函数</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

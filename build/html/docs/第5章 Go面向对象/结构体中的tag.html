@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>结构体中的tag &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC1%E7%AB%A0%20Go%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/index.html">第1章 Go基本类型</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>结构体中的tag</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第5章 Go面向对象/结构体中的tag.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tag">
+<h1>结构体中的tag<a class="headerlink" href="#tag" title="永久链接至标题"></a></h1>
+<section id="id1">
+<h2>例子<a class="headerlink" href="#id1" title="永久链接至标题"></a></h2>
+<p>结构体的字段可以额外增加一个或者多个标签，比如json序列化时用到的标签或者数据库字段名的标签：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">MyBook</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Name</span>   <span class="kt">string</span>  <span class="s">`json:&quot;name&quot;`</span>
+	<span class="nx">Author</span> <span class="kt">string</span>  <span class="s">`json:&quot;author&quot;`</span>
+	<span class="nx">Price</span>  <span class="kt">float64</span> <span class="s">`json:&quot;price&quot;`</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">book</span> <span class="o">:=</span> <span class="nx">MyBook</span><span class="p">{</span>
+		<span class="nx">Name</span><span class="p">:</span>   <span class="s">&quot;CAT&quot;</span><span class="p">,</span>
+		<span class="nx">Author</span><span class="p">:</span> <span class="s">&quot;TOMO&quot;</span><span class="p">,</span>
+		<span class="nx">Price</span><span class="p">:</span>  <span class="mi">100</span><span class="p">,</span>
+	<span class="p">}</span>
+
+	<span class="k">if</span> <span class="nx">bookStr</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Marshal</span><span class="p">(</span><span class="nx">book</span><span class="p">);</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">bookStr</span><span class="p">))</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出</span>
+<span class="p">{</span><span class="s">&quot;name&quot;</span><span class="p">:</span><span class="s">&quot;CAT&quot;</span><span class="p">,</span><span class="s">&quot;author&quot;</span><span class="p">:</span><span class="s">&quot;TOMO&quot;</span><span class="p">,</span><span class="s">&quot;price&quot;</span><span class="p">:</span><span class="mi">100</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>包含匿名结构体的tag：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">Request</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Meta</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">Caller</span>      <span class="kt">string</span> <span class="s">`json:&quot;caller&quot;`</span>
+		<span class="nx">TraceID</span>     <span class="kt">string</span> <span class="s">`json:&quot;traceId&quot;`</span>
+		<span class="nx">HintCode</span>    <span class="kt">int64</span>  <span class="s">`json:&quot;hintCode&quot;`</span>
+		<span class="nx">HintContent</span> <span class="kt">string</span> <span class="s">`json:&quot;hintContent&quot;`</span>
+	<span class="p">}</span> <span class="s">`json:&quot;meta&quot;`</span>
+	<span class="nx">Request</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">Caller</span> <span class="kt">string</span> <span class="s">`json:&quot;caller&quot;`</span>
+	<span class="p">}</span> <span class="s">`json:&quot;request&quot;`</span>
+	<span class="nx">Common</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">Lang</span>            <span class="kt">string</span> <span class="s">`json:&quot;lang&quot;`</span>
+		<span class="nx">LocationCountry</span> <span class="kt">string</span> <span class="s">`json:&quot;location_country&quot;`</span>
+		<span class="nx">LocationCityID</span>  <span class="kt">int64</span>  <span class="s">`json:&quot;location_cityid&quot;`</span>
+	<span class="p">}</span> <span class="s">`json:&quot;common&quot;`</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>通过反射获取tag<a class="headerlink" href="#id2" title="永久链接至标题"></a></h2>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">MyBook</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Name</span>   <span class="kt">string</span>  <span class="s">`json:&quot;name&quot; sql:&quot;test&quot;`</span>
+	<span class="nx">Author</span> <span class="kt">string</span>  <span class="s">`json:&quot;author&quot;`</span>
+	<span class="nx">Price</span>  <span class="kt">float64</span> <span class="s">`json:&quot;price&quot;`</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">book</span> <span class="o">:=</span> <span class="nx">MyBook</span><span class="p">{</span>
+		<span class="nx">Name</span><span class="p">:</span>   <span class="s">&quot;CAT&quot;</span><span class="p">,</span>
+		<span class="nx">Author</span><span class="p">:</span> <span class="s">&quot;TOMO&quot;</span><span class="p">,</span>
+		<span class="nx">Price</span><span class="p">:</span>  <span class="mi">100</span><span class="p">,</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 法一: 通过字段名获取字段</span>
+	<span class="k">if</span> <span class="nx">fieldName</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">TypeOf</span><span class="p">(</span><span class="nx">book</span><span class="p">).</span><span class="nx">FieldByName</span><span class="p">(</span><span class="s">&quot;Name&quot;</span><span class="p">);</span> <span class="nx">ok</span> <span class="p">{</span>
+		<span class="nx">tag</span> <span class="o">:=</span> <span class="nx">fieldName</span><span class="p">.</span><span class="nx">Tag</span>
+		<span class="c1">// tag.Get方法是对tag.Lookup方法的封装, 获取不到tag时返回空字符串</span>
+		<span class="nx">jsonTagValue</span> <span class="o">:=</span> <span class="nx">tag</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;json&quot;</span><span class="p">)</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;jsonTagValue: &quot;</span><span class="p">,</span> <span class="nx">jsonTagValue</span><span class="p">)</span>
+		<span class="k">if</span> <span class="nx">sqlTagValue</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">tag</span><span class="p">.</span><span class="nx">Lookup</span><span class="p">(</span><span class="s">&quot;sql&quot;</span><span class="p">);</span> <span class="nx">ok</span> <span class="p">{</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;sqlTagValue: &quot;</span><span class="p">,</span> <span class="nx">sqlTagValue</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 法二: 通过字段顺序获取字段</span>
+	<span class="p">{</span>
+		<span class="nx">fieldName</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">ValueOf</span><span class="p">(</span><span class="nx">book</span><span class="p">).</span><span class="nx">Type</span><span class="p">().</span><span class="nx">Field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+		<span class="nx">tag</span> <span class="o">:=</span> <span class="nx">fieldName</span><span class="p">.</span><span class="nx">Tag</span>
+		<span class="nx">jsonTagValue</span> <span class="o">:=</span> <span class="nx">tag</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;json&quot;</span><span class="p">)</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;jsonTagValue: &quot;</span><span class="p">,</span> <span class="nx">jsonTagValue</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 法三: 通过指针获取指针指向对象的字段</span>
+	<span class="p">{</span>
+		<span class="nx">fieldName</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">ValueOf</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">book</span><span class="p">).</span><span class="nx">Elem</span><span class="p">().</span><span class="nx">Type</span><span class="p">().</span><span class="nx">Field</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+		<span class="nx">tag</span> <span class="o">:=</span> <span class="nx">fieldName</span><span class="p">.</span><span class="nx">Tag</span>
+		<span class="nx">jsonTagValue</span> <span class="o">:=</span> <span class="nx">tag</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;json&quot;</span><span class="p">)</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;jsonTagValue: &quot;</span><span class="p">,</span> <span class="nx">jsonTagValue</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

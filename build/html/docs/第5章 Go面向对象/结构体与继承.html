@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>结构体与继承 &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC1%E7%AB%A0%20Go%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/index.html">第1章 Go基本类型</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>结构体与继承</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第5章 Go面向对象/结构体与继承.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>结构体与继承<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">Go</span></code>的结构体<code class="docutils literal notranslate"><span class="pre">struct</span></code>和其他语言的类<code class="docutils literal notranslate"><span class="pre">class</span></code>类似，但是放弃了包括继承在内的大量面向对象特性。</p>
+<section id="id2">
+<h2>定义<a class="headerlink" href="#id2" title="永久链接至标题"></a></h2>
+<p>和C++类似，我们可以定义结构体的数据成员和方法成员。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// 矩形</span>
+<span class="kd">type</span> <span class="nx">Rect</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="nx">width</span><span class="p">,</span> <span class="nx">height</span> <span class="kt">float64</span>
+<span class="p">}</span>
+
+<span class="c1">// 定义成员方法输出矩阵面积</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Rect</span><span class="p">)</span> <span class="nx">Area</span><span class="p">()</span> <span class="kt">float64</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">r</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="nx">r</span><span class="p">.</span><span class="nx">height</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2>可见性<a class="headerlink" href="#id3" title="永久链接至标题"></a></h2>
+<p>要使某个符号对其他包<code class="docutils literal notranslate"><span class="pre">package</span></code>可见，需要将该符号（结构体内的数据成员或者方法成员的名称）定义为以大写字母开头。</p>
+<blockquote>
+<div><p>Q：为什么Go语言中不需要有<code class="docutils literal notranslate"><span class="pre">friend</span></code>关键字？</p>
+</div></blockquote>
+<blockquote>
+<div><p>A：需要注意的是，Go语言中符号的可见性是包一级而不是类型一级的。尽管一个结构体的方法成员的符号是小写的，但同一个包的其他类型也可以访问到它。这样的可访问性控制很粗糙，但是非常实用。因为如果Go语言符号的可访问性是类型一级的，少不了还要加上<code class="docutils literal notranslate"><span class="pre">friend</span></code>这样的关键字，以表示两个类是朋友关系，可以访问彼此的私有成员。</p>
+</div></blockquote>
+</section>
+<section id="id4">
+<h2>初始化<a class="headerlink" href="#id4" title="永久链接至标题"></a></h2>
+<p>我们可以通过如下方法创建并初始化<code class="docutils literal notranslate"><span class="pre">Rect</span></code>类型：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">r1</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="nx">Rect</span><span class="p">)</span>
+	<span class="nx">r2</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Rect</span><span class="p">{}</span>
+	<span class="nx">r3</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Rect</span><span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">}</span>
+	<span class="nx">r4</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">Rect</span><span class="p">{</span><span class="nx">width</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span> <span class="nx">height</span><span class="p">:</span> <span class="mi">10</span><span class="p">}</span>
+	
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;r1: &quot;</span><span class="p">,</span> <span class="nx">r1</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;r2: &quot;</span><span class="p">,</span> <span class="nx">r2</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;r3: &quot;</span><span class="p">,</span> <span class="nx">r3</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;r4: &quot;</span><span class="p">,</span> <span class="nx">r4</span><span class="p">)</span>
+
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">r1</span><span class="p">:</span>  <span class="o">&amp;</span><span class="p">{</span><span class="mi">0</span> <span class="mi">0</span><span class="p">}</span>
+<span class="nx">r2</span><span class="p">:</span>  <span class="o">&amp;</span><span class="p">{</span><span class="mi">0</span> <span class="mi">0</span><span class="p">}</span>
+<span class="nx">r3</span><span class="p">:</span>  <span class="o">&amp;</span><span class="p">{</span><span class="mi">10</span> <span class="mi">20</span><span class="p">}</span>
+<span class="nx">r4</span><span class="p">:</span>  <span class="o">&amp;</span><span class="p">{</span><span class="mi">20</span> <span class="mi">10</span><span class="p">}</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>在Go语言中未进行显式初始化的变量都会被初始化为该类型的零值，例如<code class="docutils literal notranslate"><span class="pre">bool</span></code>类型零值时<code class="docutils literal notranslate"><span class="pre">false</span></code>，<code class="docutils literal notranslate"><span class="pre">int</span></code>类型零值是0，<code class="docutils literal notranslate"><span class="pre">string</span></code>类型的零值是空字符串。</p>
+</div></blockquote>
+<p>Go语言中不存在构造函数的概念，对象的创建通常交给一个全局的<code class="docutils literal notranslate"><span class="pre">NewXXX()</span></code>函数来完成：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">NewRect</span><span class="p">(</span><span class="nx">width</span><span class="p">,</span> <span class="nx">height</span> <span class="kt">float64</span><span class="p">)</span> <span class="o">*</span><span class="nx">Rect</span> <span class="p">{</span>
+    <span class="nx">retutn</span> <span class="o">&amp;</span><span class="nx">Rect</span><span class="p">{</span><span class="nx">width</span><span class="p">,</span> <span class="nx">height</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h2>方法中对象的参数传递方式<a class="headerlink" href="#id5" title="永久链接至标题"></a></h2>
+<section id="id6">
+<h3>1. 指针传递<a class="headerlink" href="#id6" title="永久链接至标题"></a></h3>
+<p>前面我们定义了成员方法，其中<code class="docutils literal notranslate"><span class="pre">Area</span></code>是方法名，<code class="docutils literal notranslate"><span class="pre">Rect</span></code>是方法的接收者，<code class="docutils literal notranslate"><span class="pre">r</span></code>表示对应的<code class="docutils literal notranslate"><span class="pre">Rect</span></code>实例，<code class="docutils literal notranslate"><span class="pre">*</span></code>号表示方法中对象的参数传递方式是指针传递：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// 指针传递对象</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Rect</span><span class="p">)</span> <span class="nx">Area</span><span class="p">()</span> <span class="kt">float64</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">r</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="nx">r</span><span class="p">.</span><span class="nx">height</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果需要修改对象必须以指针传递，这有时候会是一个额外成本，因为对象有时很小（比如4字节），这时候用指针传递并不划算。</p>
+<blockquote>
+<div><p>只有在你需要修改对象时，才必须使用指针。</p>
+</div></blockquote>
+</section>
+<section id="id7">
+<h3>2. 值传递<a class="headerlink" href="#id7" title="永久链接至标题"></a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// 值传递对象</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="nx">Rect</span><span class="p">)</span> <span class="nx">Area</span><span class="p">()</span> <span class="kt">float64</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">r</span><span class="p">.</span><span class="nx">width</span> <span class="o">*</span> <span class="nx">r</span><span class="p">.</span><span class="nx">height</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id8">
+<h3>3. 总结<a class="headerlink" href="#id8" title="永久链接至标题"></a></h3>
+<ul class="simple">
+<li><p>当你需要在方法内部修改对象时必须以指针传递</p></li>
+<li><p>当结构体较大时，指针传递可以提升性能</p></li>
+<li><p>当对象较小时（比如4字节），使用值传递可以提升性能</p></li>
+<li><p>为了保持代码一致性，建议统一使用指针传递</p></li>
+</ul>
+</section>
+</section>
+<section id="id9">
+<h2>匿名组合实现继承<a class="headerlink" href="#id9" title="永久链接至标题"></a></h2>
+<p>Go语言本身不支持继承，但是我们通过匿名组合的方式变相实现继承的效果。</p>
+<p>举个例子，我们有一个基类表示书籍：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/*</span>
+<span class="cm">书籍</span>
+<span class="cm"> */</span>
+<span class="kd">type</span> <span class="nx">Book</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Name</span> <span class="kt">string</span>
+	<span class="nx">Author</span> <span class="kt">string</span>
+	<span class="nx">Price</span> <span class="kt">float64</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">book</span> <span class="o">*</span><span class="nx">Book</span><span class="p">)</span> <span class="nx">GetBookName</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">book</span><span class="p">.</span><span class="nx">Name</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">book</span> <span class="o">*</span><span class="nx">Book</span><span class="p">)</span> <span class="nx">GetBookPrice</span><span class="p">()</span> <span class="kt">float64</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">book</span><span class="p">.</span><span class="nx">Price</span>
+<span class="p">}</span> 
+</pre></div>
+</div>
+<p>再构造一个”故事书“的结构体，作为派生类”继承“基类的属性和方法：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/*</span>
+<span class="cm">故事书</span>
+<span class="cm">*/</span>
+<span class="kd">type</span> <span class="nx">StoryBook</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">storyNum</span> <span class="kt">int</span>
+	<span class="nx">Book</span>     <span class="c1">// 匿名字段</span>
+<span class="p">}</span>
+
+<span class="c1">// 改写基类的GetBookPrice方法, 故事书统一打3折</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">storyBook</span> <span class="o">*</span><span class="nx">StoryBook</span><span class="p">)</span> <span class="nx">GetBookPrice</span><span class="p">()</span> <span class="kt">float64</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">storyBook</span><span class="p">.</span><span class="nx">Price</span> <span class="o">*</span> <span class="mf">0.3</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在派生类<code class="docutils literal notranslate"><span class="pre">StoryBook</span></code>中没有改写基类的方法时，相应的方法就直接被继承（比如<code class="docutils literal notranslate"><span class="pre">GetBookName</span></code>方法）。也可以继承并改写方法（比如<code class="docutils literal notranslate"><span class="pre">GetBookPrice</span></code>方法）。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

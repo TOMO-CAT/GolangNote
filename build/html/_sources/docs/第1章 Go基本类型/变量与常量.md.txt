@@ -1,0 +1,146 @@
+# Golang变量与常量
+
+## 变量
+
+>  从本质上说，变量相当于是对一块数据空间的命名，程序可以定义一个变量来申请一块数据存储空间，之后可以通过引用变量名来使用这块存储空间。
+
+#### 1. 变量声明
+
+```go
+/* 1) 隐式初始化: string为"", int为0, bool为false, 指针为nil */
+var fooStr string
+var fooInt int
+var fooBool bool
+
+/* 2) 显式初始化 */
+var fooStr string = "bar"
+var fooInt int = 100
+var fooBool bool = true
+
+/* 3) 类型自动推断 */
+var fooStr = "bar"
+var fooInt = 100
+var fooBool = true
+
+fooStr := "bar"
+fooInt := 100
+fooBool = true
+
+/* 4) 多个变量一起声明 */
+var (
+    fooStr string
+  	fooInt int
+  	fooBool bool
+)
+
+/* 5) 声明和初始化多个变量 */
+fooStr, fooInt := "bar", 100 
+```
+
+#### 2. new函数创建指针变量
+
+```go
+/* 创建int类型的匿名变量并初始化为int类型的零值 */
+fooIntPtr := new(int)
+```
+
+使用`new`函数和使用临时变量创建指针变量本质上并没有区分，相当于一个语法糖，例如下面两种写法是等价的：
+
+```go
+/* 使用new函数 */
+func newInt() *int {
+    return new(int)
+}
+
+/* 使用临时变量 */
+func newInt2() *int {
+    var dummy int
+    return &dummy
+}
+```
+
+#### 3. 匿名变量
+
+匿名变量也被称为占位符，用下划线表示。通过结合匿名变量和多重返回值可以使得代码更加简洁。
+
+```go
+func GetMultiValue() (intValue int, strValue string) {
+    return 10, "foo"
+}
+
+/* 仅获取int返回值 */
+intValue, _ := GetMultiValue()
+```
+
+## 常量
+
+> `Go`语言中常量指的是编译期间就已知且不可改变的值，常量可以是数值类型、布尔类型和字符串类型等。
+
+#### 1. 字面常量
+
+字面常量`literal`指的是程序中硬编码的常量，例如：
+
+```go
+-12          // 整数类型常量
+3.1415       // 浮点类型常量
+1.1+12i      // 复数类型常量
+true         // 布尔类型常量
+"bar"        // 字符串常量
+```
+
+> 其他语言的常量通常都有特定的类型，比如`-12`在`C`语言中表示`int`型常量，如果要指定一个值为`-12`的`long`常量，需要写成`-12l`。`Go`语言中的字面常量是无类型，只要这个常量在相应类型的值域范围内，那么就可以作为该类型的常量。比如`-12`的字面常量在`Go`语言中可以赋值给`int`、`int32`、`int64`、`float32`、`float64`、`complex64`和`complex128`等类型的变量。
+
+#### 2. 常量定义
+
+通过`const`关键字可以给字面常量指定一个友好的名字：
+
+```go
+const Pi float64 = 3.1415926535897
+const zero = 0.0  // 无类型浮点类型常量
+```
+
+> `Go`语言中的常量定义可以不限定常量类型，此时它与字面常量一样是无类型常量。
+
+#### 3. iota
+
+`iota`在每一个`const`关键字出现时会被重置为0，在下一个`const`关键字出现之前，每出现一次`iota`，其所代表的数字会自增1。
+
+```go
+const (          // iota重置为0
+	c0 = iota    // 0
+    c1 = iota    // 1
+    c2 = iota    // 2
+)
+
+const (
+	a = 1 << iota   // 1
+    b = 1 << iota   // 2
+    c = 1 << iota   // 4
+)
+
+/* 简洁写法 */
+const (
+	c0 = iota     // 0
+    c1            // 1
+    c2            // 2
+)
+```
+
+#### 4. 枚举
+
+枚举指一系列相关的常量，`Go`语言不支持很多其他语言明确支持的`enum`关键字：
+
+```go
+const (
+	Sunday = iota
+    Monday
+    Tuesday
+    Wednesday
+    Thursday
+    Friday
+    Saturday
+)
+```
+
+
+

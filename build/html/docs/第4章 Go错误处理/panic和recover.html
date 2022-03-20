@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>panic和recover &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC1%E7%AB%A0%20Go%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/index.html">第1章 Go基本类型</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>panic和recover</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第4章 Go错误处理/panic和recover.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="panicrecover">
+<h1>panic和recover<a class="headerlink" href="#panicrecover" title="永久链接至标题"></a></h1>
+<section id="panic">
+<h2>触发panic<a class="headerlink" href="#panic" title="永久链接至标题"></a></h2>
+<p>可以通过<code class="docutils literal notranslate"><span class="pre">panic</span></code>函数触发：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nb">panic</span><span class="p">(</span><span class="s">&quot;TOMO-CAT&quot;</span><span class="p">)</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">panic</span><span class="p">:</span> <span class="nx">TOMO</span><span class="o">-</span><span class="nx">CAT</span>
+
+<span class="nx">goroutine</span> <span class="mi">1</span> <span class="p">[</span><span class="nx">running</span><span class="p">]:</span>
+<span class="nx">main</span><span class="p">.</span><span class="nx">main</span><span class="p">()</span>
+        <span class="o">/</span><span class="nx">Users</span><span class="o">/</span><span class="nx">MyProject</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">main</span><span class="o">/</span><span class="nx">main</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">25</span> <span class="o">+</span><span class="mh">0x39</span>
+
+<span class="nx">Process</span> <span class="nx">finished</span> <span class="nx">with</span> <span class="nx">exit</span> <span class="nx">code</span> <span class="mi">2</span>
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h2>捕获panic<a class="headerlink" href="#id1" title="永久链接至标题"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">recover</span></code>函数用于终止错误，但是必须在<code class="docutils literal notranslate"><span class="pre">defer</span></code>函数中才能生效：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="nx">r</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;panic with unknown err: %v\n&quot;</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}()</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>无法跨协程<a class="headerlink" href="#id2" title="永久链接至标题"></a></h2>
+<p>需要注意的是在子协程内触发<code class="docutils literal notranslate"><span class="pre">panic</span></code>，只能在子协程内的<code class="docutils literal notranslate"><span class="pre">defer</span></code>函数中捕获<code class="docutils literal notranslate"><span class="pre">panic</span></code>，不能在外层协程里面来捕获<code class="docutils literal notranslate"><span class="pre">panic</span></code>。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c1">// 在main函数中捕获panic</span>
+	<span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">r</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="nx">r</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;panic with unknown err: %v\n&quot;</span><span class="p">,</span> <span class="nx">r</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}()</span>
+
+	<span class="c1">// 新开子协程触发panic但是并没有捕获</span>
+	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="s">&quot;TOMO-CAT&quot;</span><span class="p">)</span>
+	<span class="p">}()</span>
+
+	<span class="c1">// sleep一会, 否则子协程还未执行就退出main函数了</span>
+	<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">panic</span><span class="p">:</span> <span class="nx">TOMO</span><span class="o">-</span><span class="nx">CAT</span>
+
+<span class="nx">goroutine</span> <span class="mi">5</span> <span class="p">[</span><span class="nx">running</span><span class="p">]:</span>
+<span class="nx">main</span><span class="p">.</span><span class="nx">main</span><span class="p">.</span><span class="nx">func2</span><span class="p">()</span>
+        <span class="o">/</span><span class="nx">Users</span><span class="o">/</span><span class="nx">MyProject</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">main</span><span class="o">/</span><span class="nx">main</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">34</span> <span class="o">+</span><span class="mh">0x39</span>
+<span class="nx">created</span> <span class="nx">by</span> <span class="nx">main</span><span class="p">.</span><span class="nx">main</span>
+        <span class="o">/</span><span class="nx">Users</span><span class="o">/</span><span class="nx">MyProject</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">main</span><span class="o">/</span><span class="nx">main</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">33</span> <span class="o">+</span><span class="mh">0x5b</span>
+
+<span class="nx">Process</span> <span class="nx">finished</span> <span class="nx">with</span> <span class="nx">exit</span> <span class="nx">code</span> <span class="mi">2</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

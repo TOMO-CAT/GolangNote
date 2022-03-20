@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Go选择语句 &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC1%E7%AB%A0%20Go%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/index.html">第1章 Go基本类型</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Go选择语句</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第3章 Go流程控制/switch选择语句.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="go">
+<h1>Go选择语句<a class="headerlink" href="#go" title="永久链接至标题"></a></h1>
+<section id="id1">
+<h2>写法<a class="headerlink" href="#id1" title="永久链接至标题"></a></h2>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">i</span> <span class="kt">int</span>
+<span class="k">switch</span> <span class="nx">i</span> <span class="p">{</span>
+<span class="k">case</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;0&quot;</span><span class="p">)</span>
+<span class="k">case</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;1&quot;</span><span class="p">)</span>
+<span class="k">case</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="k">fallthrough</span>
+<span class="k">case</span> <span class="mi">3</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;3&quot;</span><span class="p">)</span>
+<span class="k">case</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;4, 5, 6&quot;</span><span class="p">)</span>
+<span class="k">default</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;others&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>i为0：输出”0”</p></li>
+<li><p>i为1：输出”1”</p></li>
+<li><p>i为2和3：输出”3”</p></li>
+<li><p>i为4、5和6：输出”4,5,6”</p></li>
+<li><p>i为其他值：输出”others”</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>注意<a class="headerlink" href="#id2" title="永久链接至标题"></a></h2>
+<section id="fallthrough">
+<h3>1. fallthrough关键字<a class="headerlink" href="#fallthrough" title="永久链接至标题"></a></h3>
+<blockquote>
+<div><p>和C++不同的是，如果case条件后没有接任何语句块，那么相当于该case满足时不做任何操作。如果要指明继续执行紧跟着的下一个case的语句块，那么需要添加<code class="docutils literal notranslate"><span class="pre">fallthrough</span></code>关键字。</p>
+</div></blockquote>
+<p>正常情况下，只要有一个case满足条件，那么就会直接退出<code class="docutils literal notranslate"><span class="pre">switch</span></code>结构体。如果我们使用关键字<code class="docutils literal notranslate"><span class="pre">fallthrough</span></code>就会直接执行下一个<code class="docutils literal notranslate"><span class="pre">case</span></code>语句，而且不需要判断条件。但是<code class="docutils literal notranslate"><span class="pre">fallthrough</span></code>只会穿透一层，执行完下一个case语句后就退出<code class="docutils literal notranslate"><span class="pre">switch</span></code>结构体。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// 使用fallthrough: 输出&quot;default&quot;</span>
+<span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span>
+<span class="k">switch</span> <span class="nx">i</span> <span class="p">{</span>
+<span class="k">case</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;0&quot;</span><span class="p">)</span>
+<span class="k">case</span> <span class="mi">1</span><span class="p">:</span>
+	<span class="k">fallthrough</span>
+<span class="k">default</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;default&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// 不使用: 无任何输出</span>
+<span class="nx">i</span> <span class="o">:=</span> <span class="mi">1</span>
+<span class="k">switch</span> <span class="nx">i</span> <span class="p">{</span>
+<span class="k">case</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;0&quot;</span><span class="p">)</span>
+<span class="k">case</span> <span class="mi">1</span><span class="p">:</span>
+<span class="k">default</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;default&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="case">
+<h3>2. 单个case后可跟多个条件<a class="headerlink" href="#case" title="永久链接至标题"></a></h3>
+<p>一个case后可跟多个条件，每个条件之间是“或”的关系：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// i为4或5或6时输出都是&quot;4, 5, 6&quot;</span>
+<span class="kd">var</span> <span class="nx">i</span> <span class="kt">int</span>
+<span class="k">switch</span> <span class="nx">i</span> <span class="p">{</span>
+<span class="k">case</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;0&quot;</span><span class="p">)</span>
+<span class="k">case</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;1&quot;</span><span class="p">)</span>
+<span class="k">case</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="k">fallthrough</span>
+<span class="k">case</span> <span class="mi">3</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;3&quot;</span><span class="p">)</span>
+<span class="k">case</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;4, 5, 6&quot;</span><span class="p">)</span>
+<span class="k">default</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;others&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="switch">
+<h3>3. switch后可不接表达式<a class="headerlink" href="#switch" title="永久链接至标题"></a></h3>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">switch</span></code>后可以不跟表达式，这样子的话整个<code class="docutils literal notranslate"><span class="pre">switch</span></code>结构与多个<code class="docutils literal notranslate"><span class="pre">if...else...</span></code>结构类似。</p>
+</div></blockquote>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">score</span> <span class="o">:=</span> <span class="mi">10</span>
+<span class="k">switch</span> <span class="p">{</span>
+<span class="k">case</span> <span class="nx">score</span> <span class="o">&gt;=</span> <span class="mi">60</span> <span class="o">&amp;&amp;</span> <span class="nx">score</span> <span class="o">&lt;=</span> <span class="mi">100</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;pass&quot;</span><span class="p">)</span>
+<span class="k">case</span> <span class="nx">score</span> <span class="p">&lt;</span> <span class="mi">60</span> <span class="o">&amp;&amp;</span> <span class="nx">score</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;fail&quot;</span><span class="p">)</span>
+<span class="k">default</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;invalid score&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="breakcase">
+<h3>4. 不需要break来明确表示退出一个case<a class="headerlink" href="#breakcase" title="永久链接至标题"></a></h3>
+<p>和C++不同的是，Go语言下的switch无论是否在case语句块中使用break，都会在执行完该case语句块后跳出switch结构体。</p>
+</section>
+<section id="id3">
+<h3>5. case条件常量不可重复<a class="headerlink" href="#id3" title="永久链接至标题"></a></h3>
+<blockquote>
+<div><p>当<code class="docutils literal notranslate"><span class="pre">case</span></code>后接的是常量时，该常量只能出现一次。</p>
+</div></blockquote>
+<p>下面的错误案例在编译时会报错：<code class="docutils literal notranslate"><span class="pre">duplicate</span> <span class="pre">case</span> <span class="pre">“male”</span> <span class="pre">in</span> <span class="pre">switch</span></code>。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">gender</span> <span class="o">:=</span> <span class="s">&quot;male&quot;</span>
+
+<span class="k">switch</span> <span class="nx">gender</span> <span class="p">{</span>
+<span class="k">case</span> <span class="s">&quot;male&quot;</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;男性&quot;</span><span class="p">)</span>
+<span class="k">case</span> <span class="s">&quot;male&quot;</span><span class="p">:</span>  <span class="c1">// 与上面重复</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;男性&quot;</span><span class="p">)</span>
+<span class="k">case</span> <span class="s">&quot;female&quot;</span><span class="p">:</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;女性&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

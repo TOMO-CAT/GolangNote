@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>单元测试 &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC1%E7%AB%A0%20Go%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/index.html">第1章 Go基本类型</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>单元测试</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第7章 Go语言特性/单元测试.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>单元测试<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+<section id="id2">
+<h2>简介<a class="headerlink" href="#id2" title="永久链接至标题"></a></h2>
+<p>尽管单元测试几乎是实际开发中必备的一个环节，但其他语言鲜有支持的，Go在语言层面提供了单元测试的特性，可以很方便地撰写单测文件。</p>
+</section>
+<section id="testing">
+<h2>testing标准库<a class="headerlink" href="#testing" title="永久链接至标题"></a></h2>
+<section id="id3">
+<h3>1. 介绍<a class="headerlink" href="#id3" title="永久链接至标题"></a></h3>
+<p>golang自带的testing库可以很方便地为package提供自动化测试，单测文件指的是在待测试的包下创建的以<code class="docutils literal notranslate"><span class="pre">_test.go</span></code>结尾的文件。单测函数分为功能测试函数和性能测试函数，分别以Test和Benchmark为前缀：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// 功能测试函数</span>
+<span class="kd">func</span> <span class="nx">TestFoo</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span>
+
+<span class="c1">// 性能测试函数</span>
+<span class="kd">func</span> <span class="nx">BenchmarkBar</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>执行测试的时候，直接使用<code class="docutils literal notranslate"><span class="pre">go</span> <span class="pre">test</span></code>加上对应的包名即可：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="k">go</span> <span class="nx">test</span> <span class="nx">my_package</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3>2. 功能测试函数<a class="headerlink" href="#id4" title="永久链接至标题"></a></h3>
+<p>待测试函数：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// Add 返回两数之和</span>
+<span class="kd">func</span> <span class="nx">Add</span><span class="p">(</span><span class="nx">a</span><span class="p">,</span> <span class="nx">b</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">a</span> <span class="o">+</span> <span class="nx">b</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>功能测试函数：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">TestAdd</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// 构造case</span>
+	<span class="nx">cases</span> <span class="o">:=</span> <span class="p">[]</span><span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">left</span>     <span class="kt">int</span>
+		<span class="nx">right</span>    <span class="kt">int</span>
+		<span class="nx">excepted</span> <span class="kt">int</span>
+	<span class="p">}{</span>
+		<span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">},</span>
+		<span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">},</span>
+		<span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">},</span>
+		<span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">},</span>
+		<span class="p">{</span><span class="mi">99999</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100000</span><span class="p">},</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 通过Error或者Errorf函数使单测失败</span>
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">c</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">cases</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">c</span><span class="p">.</span><span class="nx">excepted</span> <span class="o">!=</span> <span class="nx">Add</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">left</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">right</span><span class="p">)</span> <span class="p">{</span>
+			<span class="nx">t</span><span class="p">.</span><span class="nx">Errorf</span><span class="p">(</span><span class="s">&quot;Add fail, left:%d right:%d expect:%d\n&quot;</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">left</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">right</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">excepted</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="o">==</span><span class="p">=</span> <span class="nx">RUN</span>   <span class="nx">TestAdd</span>
+<span class="o">---</span> <span class="nx">PASS</span><span class="p">:</span> <span class="nx">TestAdd</span> <span class="p">(</span><span class="mf">0.00</span><span class="nx">s</span><span class="p">)</span>
+<span class="nx">PASS</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3>3. 性能测试函数<a class="headerlink" href="#id5" title="永久链接至标题"></a></h3>
+<section id="id6">
+<h4>3.1 性能测试函数简单例子<a class="headerlink" href="#id6" title="永久链接至标题"></a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">BenchmarkAdd</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="nx">Add</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">goos</span><span class="p">:</span> <span class="nx">darwin</span>
+<span class="nx">goarch</span><span class="p">:</span> <span class="nx">amd64</span>
+<span class="nx">pkg</span><span class="p">:</span> <span class="nx">aweSomeProject</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">main</span>
+<span class="nx">BenchmarkAdd</span>
+<span class="nx">BenchmarkAdd</span><span class="o">-</span><span class="mi">12</span>    	<span class="mi">1000000000</span>	         <span class="mf">0.526</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>
+<span class="nx">PASS</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h4>3.2 性能测试函数参数<a class="headerlink" href="#id7" title="永久链接至标题"></a></h4>
+<p>注意Benchmark输出的各项参数如下：</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>goos</td>
+<td>操作系统</td>
+<td>darwin表示Mac</td>
+</tr>
+<tr>
+<td>goarch</td>
+<td>处理器架构</td>
+<td></td>
+</tr>
+<tr>
+<td>BenchmarkAdd-12</td>
+<td>-12表示12个逻辑CPU</td>
+<td></td>
+</tr>
+<tr>
+<td>1000000000</td>
+<td>执行次数是1000000000次</td>
+<td></td>
+</tr>
+<tr>
+<td>0.526 ns/op</td>
+<td>每次操作耗时</td>
+<td></td>
+</tr>
+</tbody>
+</table></section>
+<section id="id8">
+<h4>3.3 性能测试函数计时器<a class="headerlink" href="#id8" title="永久链接至标题"></a></h4>
+<p>如果性能测试函数中有一些额外的初始化操作时，可以通过 启停计时器来屏蔽这些操作对最终测试结果的影响：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">BenchmarkAdd</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// 以sleep函数代替耗时的初始化</span>
+	<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="nx">Add</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">goos</span><span class="p">:</span> <span class="nx">darwin</span>
+<span class="nx">goarch</span><span class="p">:</span> <span class="nx">amd64</span>
+<span class="nx">pkg</span><span class="p">:</span> <span class="nx">aweSomeProject</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">main</span>
+<span class="nx">BenchmarkAdd</span>
+<span class="nx">BenchmarkAdd</span><span class="o">-</span><span class="mi">12</span>    	       <span class="mi">1</span>	<span class="mi">10004399488</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>
+<span class="nx">PASS</span>
+</pre></div>
+</div>
+<p>从上面的结果可以看到如果在Benchmark函数中加入比较复杂的初始化函数，可能导致性能测试结果不准，我们可以通过控制Benchmark的Timer来解决这个问题：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">BenchmarkAdd</span><span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">B</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// 以sleep函数代替耗时的初始化</span>
+	<span class="nx">b</span><span class="p">.</span><span class="nx">StopTimer</span><span class="p">()</span>
+	<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+	<span class="nx">b</span><span class="p">.</span><span class="nx">StartTimer</span><span class="p">()</span>
+
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">N</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="nx">Add</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">goos</span><span class="p">:</span> <span class="nx">darwin</span>
+<span class="nx">goarch</span><span class="p">:</span> <span class="nx">amd64</span>
+<span class="nx">pkg</span><span class="p">:</span> <span class="nx">aweSomeProject</span><span class="o">/</span><span class="nx">src</span><span class="o">/</span><span class="nx">main</span>
+<span class="nx">BenchmarkAdd</span>
+<span class="nx">BenchmarkAdd</span><span class="o">-</span><span class="mi">12</span>    	<span class="mi">1000000000</span>	         <span class="mf">0.267</span> <span class="nx">ns</span><span class="o">/</span><span class="nx">op</span>
+<span class="nx">PASS</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="go-test">
+<h3>4. go test常用参数<a class="headerlink" href="#go-test" title="永久链接至标题"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>参数</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-cpu</td>
+<td>测试最大逻辑CPU数</td>
+<td>默认等于CPU核数</td>
+</tr>
+<tr>
+<td>-count</td>
+<td>执行测试函数的次数</td>
+<td>默认为1</td>
+</tr>
+<tr>
+<td>-run</td>
+<td>执行功能测试函数</td>
+<td>支持正则匹配，可以选择测试函数或者测试文件</td>
+</tr>
+<tr>
+<td>-bench</td>
+<td>执行性能测试函数</td>
+<td>支持正则匹配</td>
+</tr>
+<tr>
+<td>-benchtime</td>
+<td>性能测试最大探索时间上限</td>
+<td></td>
+</tr>
+<tr>
+<td>-parallel</td>
+<td>设置最大并发执行数</td>
+<td></td>
+</tr>
+<tr>
+<td>-v</td>
+<td>显示测试过程信息</td>
+<td></td>
+</tr>
+</tbody>
+</table></section>
+</section>
+<section id="goconvey">
+<h2>GoConvey<a class="headerlink" href="#goconvey" title="永久链接至标题"></a></h2>
+<section id="id9">
+<h3>1. 简介<a class="headerlink" href="#id9" title="永久链接至标题"></a></h3>
+<p>goconvey可以很方便地撰写单测用例，使用<code class="docutils literal notranslate"><span class="pre">So</span></code>进行断言：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="p">(</span>
+	<span class="p">.</span> <span class="s">&quot;github.com/smartystreets/goconvey/convey&quot;</span>
+	<span class="s">&quot;testing&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">// TestAdd 测试Add函数</span>
+<span class="kd">func</span> <span class="nx">TestAdd</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">Convey</span><span class="p">(</span><span class="s">&quot;1 + 1 = 2&quot;</span><span class="p">,</span> <span class="nx">t</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">So</span><span class="p">(</span><span class="nx">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nx">ShouldEqual</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+	<span class="p">})</span> 
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>对于未写完的测试可以设置成nil或者skip：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">TestAdd</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">Convey</span><span class="p">(</span><span class="s">&quot;Description&quot;</span><span class="p">,</span> <span class="nx">t</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">Convey</span><span class="p">(</span><span class="s">&quot;1 + 1 = 2&quot;</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+			<span class="nx">So</span><span class="p">(</span><span class="nx">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nx">ShouldEqual</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+		<span class="p">})</span>
+
+		<span class="c1">// 暂未完成的Convey可以跳过</span>
+		<span class="nx">Convey</span><span class="p">(</span><span class="s">&quot;This isn&#39;t yet implemented&quot;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+	<span class="p">})</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h3>2. 支持的断言<a class="headerlink" href="#id10" title="永久链接至标题"></a></h3>
+<section id="id11">
+<h4>2.1 通用断言<a class="headerlink" href="#id11" title="永久链接至标题"></a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">So</span><span class="p">(</span><span class="nx">thing1</span><span class="p">,</span> <span class="nx">ShouldEqual</span><span class="p">,</span> <span class="nx">thing2</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">thing1</span><span class="p">,</span> <span class="nx">ShouldNotEqual</span><span class="p">,</span> <span class="nx">thing2</span><span class="p">)</span>
+<span class="c1">// a deep equals for arrays, slices, maps, and structs</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">thing1</span><span class="p">,</span> <span class="nx">ShouldResemble</span><span class="p">,</span> <span class="nx">thing2</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">thing1</span><span class="p">,</span> <span class="nx">ShouldNotResemble</span><span class="p">,</span> <span class="nx">thing2</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">thing1</span><span class="p">,</span> <span class="nx">ShouldPointTo</span><span class="p">,</span> <span class="nx">thing2</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">thing1</span><span class="p">,</span> <span class="nx">ShouldNotPointTo</span><span class="p">,</span> <span class="nx">thing2</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">thing1</span><span class="p">,</span> <span class="nx">ShouldBeNil</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">thing1</span><span class="p">,</span> <span class="nx">ShouldNotBeNil</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">thing1</span><span class="p">,</span> <span class="nx">ShouldBeTrue</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">thing1</span><span class="p">,</span> <span class="nx">ShouldBeFalse</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">thing1</span><span class="p">,</span> <span class="nx">ShouldBeZeroValue</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h4>2.2 数值比较断言<a class="headerlink" href="#id12" title="永久链接至标题"></a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">So</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">ShouldBeGreaterThan</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">ShouldBeGreaterThanOrEqualTo</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">ShouldBeLessThan</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">ShouldBeLessThanOrEqualTo</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="mf">1.1</span><span class="p">,</span> <span class="nx">ShouldBeBetween</span><span class="p">,</span> <span class="mf">.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="mf">1.1</span><span class="p">,</span> <span class="nx">ShouldNotBeBetween</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="mf">1.1</span><span class="p">,</span> <span class="nx">ShouldBeBetweenOrEqual</span><span class="p">,</span> <span class="mf">.9</span><span class="p">,</span> <span class="mf">1.1</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="mf">1.1</span><span class="p">,</span> <span class="nx">ShouldNotBeBetweenOrEqual</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="c1">// tolerance is optional; default 0.0000000001</span>
+<span class="nx">So</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="nx">ShouldAlmostEqual</span><span class="p">,</span> <span class="mf">0.99999999</span><span class="p">,</span> <span class="mf">.0001</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="nx">ShouldNotAlmostEqual</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">.0001</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h4>2.3 集合断言<a class="headerlink" href="#id13" title="永久链接至标题"></a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">So</span><span class="p">([]</span><span class="kt">int</span><span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">},</span> <span class="nx">ShouldContain</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">([]</span><span class="kt">int</span><span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">},</span> <span class="nx">ShouldNotContain</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="nx">ShouldBeIn</span><span class="p">,</span> <span class="o">...</span><span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">})</span>
+<span class="nx">So</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="nx">ShouldNotBeIn</span><span class="p">,</span> <span class="o">...</span><span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">})</span>
+<span class="nx">So</span><span class="p">([]</span><span class="kt">int</span><span class="p">{},</span> <span class="nx">ShouldBeEmpty</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">([]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">},</span> <span class="nx">ShouldNotBeEmpty</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;a&quot;</span><span class="p">:</span> <span class="s">&quot;b&quot;</span><span class="p">},</span> <span class="nx">ShouldContainKey</span><span class="p">,</span> <span class="s">&quot;a&quot;</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;a&quot;</span><span class="p">:</span> <span class="s">&quot;b&quot;</span><span class="p">},</span> <span class="nx">ShouldNotContainKey</span><span class="p">,</span> <span class="s">&quot;b&quot;</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;a&quot;</span><span class="p">:</span> <span class="s">&quot;b&quot;</span><span class="p">},</span> <span class="nx">ShouldNotBeEmpty</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{},</span> <span class="nx">ShouldBeEmpty</span><span class="p">)</span>
+<span class="c1">// supports map, slice, chan, and string</span>
+<span class="nx">So</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">{</span><span class="s">&quot;a&quot;</span><span class="p">:</span> <span class="s">&quot;b&quot;</span><span class="p">},</span> <span class="nx">ShouldHaveLength</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id14">
+<h4>2.4 字符串断言<a class="headerlink" href="#id14" title="永久链接至标题"></a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">So</span><span class="p">(</span><span class="s">&quot;asdf&quot;</span><span class="p">,</span> <span class="nx">ShouldStartWith</span><span class="p">,</span> <span class="s">&quot;as&quot;</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="s">&quot;asdf&quot;</span><span class="p">,</span> <span class="nx">ShouldNotStartWith</span><span class="p">,</span> <span class="s">&quot;df&quot;</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="s">&quot;asdf&quot;</span><span class="p">,</span> <span class="nx">ShouldEndWith</span><span class="p">,</span> <span class="s">&quot;df&quot;</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="s">&quot;asdf&quot;</span><span class="p">,</span> <span class="nx">ShouldNotEndWith</span><span class="p">,</span> <span class="s">&quot;df&quot;</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="s">&quot;asdf&quot;</span><span class="p">,</span> <span class="nx">ShouldContainSubstring</span><span class="p">,</span> <span class="s">&quot;sd&quot;</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="s">&quot;asdf&quot;</span><span class="p">,</span> <span class="nx">ShouldNotContainSubstring</span><span class="p">,</span> <span class="s">&quot;er&quot;</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="s">&quot;adsf&quot;</span><span class="p">,</span> <span class="nx">ShouldBeBlank</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="s">&quot;asdf&quot;</span><span class="p">,</span> <span class="nx">ShouldNotBeBlank</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="panic">
+<h4>2.5 panic断言<a class="headerlink" href="#panic" title="永久链接至标题"></a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">So</span><span class="p">(</span><span class="kd">func</span><span class="p">(),</span> <span class="nx">ShouldPanic</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="kd">func</span><span class="p">(),</span> <span class="nx">ShouldNotPanic</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="kd">func</span><span class="p">(),</span> <span class="nx">ShouldPanicWith</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>		<span class="c1">// or errors.New(&quot;something&quot;)</span>
+<span class="nx">So</span><span class="p">(</span><span class="kd">func</span><span class="p">(),</span> <span class="nx">ShouldNotPanicWith</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">)</span>	<span class="c1">// or errors.New(&quot;something&quot;)</span>
+</pre></div>
+</div>
+</section>
+<section id="id15">
+<h4>2.6 类型断言<a class="headerlink" href="#id15" title="永久链接至标题"></a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">So</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">ShouldHaveSameTypeAs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="nx">So</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">ShouldNotHaveSameTypeAs</span><span class="p">,</span> <span class="s">&quot;asdf&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id16">
+<h4>2.7 时间断言<a class="headerlink" href="#id16" title="永久链接至标题"></a></h4>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">So</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">(),</span> <span class="nx">ShouldHappenBefore</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">())</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">(),</span> <span class="nx">ShouldHappenOnOrBefore</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">())</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">(),</span> <span class="nx">ShouldHappenAfter</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">())</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">(),</span> <span class="nx">ShouldHappenOnOrAfter</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">())</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">(),</span> <span class="nx">ShouldHappenBetween</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">(),</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">())</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">(),</span> <span class="nx">ShouldHappenOnOrBetween</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">(),</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">())</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">(),</span> <span class="nx">ShouldNotHappenOnOrBetween</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">(),</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">())</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">(),</span> <span class="nx">ShouldHappenWithin</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">())</span>
+<span class="nx">So</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">(),</span> <span class="nx">ShouldNotHappenWithin</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Now</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id17">
+<h3>3. 自定义断言<a class="headerlink" href="#id17" title="永久链接至标题"></a></h3>
+<p>当goconvey提供的标准断言不满足需求时，可以使用如下的自定义断言：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">should</span><span class="p">&lt;</span><span class="nx">do</span><span class="o">-</span><span class="nx">something</span><span class="p">&gt;(</span><span class="nx">actual</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">expected</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">string</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">&lt;</span><span class="nx">some</span><span class="o">-</span><span class="nx">important</span><span class="o">-</span><span class="nx">condition</span><span class="o">-</span><span class="nx">is</span><span class="o">-</span><span class="nx">met</span><span class="p">(</span><span class="nx">actual</span><span class="p">,</span> <span class="nx">expected</span><span class="p">)&gt;</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="s">&quot;&quot;</span>   <span class="c1">// empty string means the assertion passed</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="s">&quot;&lt;some descriptive message detailing why the assertion failed...&gt;&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id18">
+<h3>4. 用例执行顺序<a class="headerlink" href="#id18" title="永久链接至标题"></a></h3>
+<p>前面提到Convey支持树形结构，这样的测试用例组织方式可以方便我们消除重复的初始化代码，举个例子：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">Convey</span> <span class="nx">A</span>
+	<span class="nx">So</span> <span class="mi">1</span>
+	<span class="nx">So</span> <span class="mi">2</span>
+	<span class="nx">Convey</span> <span class="nx">B</span>
+		<span class="nx">So</span> <span class="mi">3</span>
+		<span class="nx">Convey</span> <span class="nx">C</span>
+			<span class="nx">So</span> <span class="mi">4</span>
+	<span class="nx">Convey</span> <span class="nx">D</span>
+		<span class="nx">So</span> <span class="mi">5</span>
+</pre></div>
+</div>
+<p>上述case组织形式下用例的执行顺序为：A12B3C4A12D5。</p>
+</section>
+<section id="reset">
+<h3>5. Reset<a class="headerlink" href="#reset" title="永久链接至标题"></a></h3>
+<p>部分convey的执行需要依赖一些初始化函数，在这些convey执行完后可以使用<code class="docutils literal notranslate"><span class="pre">Reset()</span></code>函数来清除对应的环境配置：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">Convey</span><span class="p">(</span><span class="s">&quot;Test db operation&quot;</span><span class="p">,</span> <span class="nx">t</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// setup (run before each `Convey` at this scope):</span>
+    <span class="nx">db</span><span class="p">.</span><span class="nx">Open</span><span class="p">()</span>
+    <span class="nx">db</span><span class="p">.</span><span class="nx">Initialize</span><span class="p">()</span>
+
+    <span class="nx">Convey</span><span class="p">(</span><span class="s">&quot;Test query()&quot;</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">db</span><span class="p">.</span><span class="nx">Query</span><span class="p">()</span>
+        <span class="c1">// TODO: assertions here</span>
+    <span class="p">})</span>
+
+    <span class="nx">Convey</span><span class="p">(</span><span class="s">&quot;Test insert()&quot;</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">db</span><span class="p">.</span><span class="nx">Insert</span><span class="p">()</span>
+        <span class="c1">// TODO: assertions here</span>
+    <span class="p">})</span>
+
+    <span class="nx">Reset</span><span class="p">(</span><span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+        <span class="c1">// This reset is run after each `Convey` at the same scope.</span>
+        <span class="nx">db</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+    <span class="p">})</span>
+
+<span class="p">})</span>
+</pre></div>
+</div>
+</section>
+<section id="id19">
+<h3>6. 跳过断言<a class="headerlink" href="#id19" title="永久链接至标题"></a></h3>
+<p>对于需要跳过的断言，我们有如下三种方式实现：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// 跳过整个convey</span>
+<span class="nx">SkipConvey</span><span class="p">(</span><span class="s">&quot;Foo&quot;</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+<span class="p">})</span>
+
+<span class="c1">// 跳过未完成的convey</span>
+<span class="nx">Convey</span><span class="p">(</span><span class="s">&quot;Foo&quot;</span><span class="p">,</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">convey</span><span class="p">(</span><span class="s">&quot;This isn&#39;t yet implemented&quot;</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+<span class="p">})</span>
+
+<span class="c1">// 跳过So断言</span>
+<span class="nx">Convey</span><span class="p">(</span><span class="s">&quot;Test Add&quot;</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">SkipSo</span><span class="p">(</span><span class="nx">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nx">ShouldEqual</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="testify">
+<h2>testify<a class="headerlink" href="#testify" title="永久链接至标题"></a></h2>
+<section id="id20">
+<h3>1. 简洁<a class="headerlink" href="#id20" title="永久链接至标题"></a></h3>
+<p>和C++单测框架gtest类似，testify提供了assert和require，让你的单测代码更加简洁高效。</p>
+</section>
+<section id="assert">
+<h3>2. assert<a class="headerlink" href="#assert" title="永久链接至标题"></a></h3>
+<p>assert可以使得单测中的断言更加清晰：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;github.com/stretchr/testify/assert&quot;</span>
+	<span class="s">&quot;testing&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">TestAdd</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">assert</span><span class="p">.</span><span class="nx">Equal</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="nx">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="require">
+<h3>3. require<a class="headerlink" href="#require" title="永久链接至标题"></a></h3>
+<p>require的使用方法和assert相同，唯一的不同在于assert仅仅返回布尔值而require在断言不通过时会中断程序运行。</p>
+</section>
+<section id="id21">
+<h3>4. 其他常用断言<a class="headerlink" href="#id21" title="永久链接至标题"></a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">Equal</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">expected</span><span class="p">,</span> <span class="nx">actual</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span>
+<span class="kd">func</span> <span class="nx">NotEqual</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">expected</span><span class="p">,</span> <span class="nx">actual</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span>
+
+<span class="kd">func</span> <span class="nx">Nil</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">object</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span>
+<span class="kd">func</span> <span class="nx">NotNil</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">object</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span>
+
+<span class="kd">func</span> <span class="nx">Empty</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">object</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span>
+<span class="kd">func</span> <span class="nx">NotEmpty</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">object</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span>
+
+<span class="kd">func</span> <span class="nx">NoError</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">,</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span>
+<span class="kd">func</span> <span class="nx">Error</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">,</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span>
+
+<span class="kd">func</span> <span class="nx">Zero</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">i</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span>
+<span class="kd">func</span> <span class="nx">NotZero</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">i</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span>
+
+<span class="kd">func</span> <span class="nx">True</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">bool</span><span class="p">,</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span>
+<span class="kd">func</span> <span class="nx">False</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">value</span> <span class="kt">bool</span><span class="p">,</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span>
+
+<span class="kd">func</span> <span class="nx">Len</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">object</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">length</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span>
+
+<span class="kd">func</span> <span class="nx">NotContains</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">contains</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span>
+<span class="kd">func</span> <span class="nx">NotContains</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">contains</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span>
+<span class="kd">func</span> <span class="nx">Subset</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">list</span><span class="p">,</span> <span class="nx">subset</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="p">(</span><span class="nx">ok</span> <span class="kt">bool</span><span class="p">)</span>
+<span class="kd">func</span> <span class="nx">NotSubset</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">list</span><span class="p">,</span> <span class="nx">subset</span> <span class="kd">interface</span><span class="p">{},</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="p">(</span><span class="nx">ok</span> <span class="kt">bool</span><span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">FileExists</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">path</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span>
+<span class="kd">func</span> <span class="nx">DirExists</span><span class="p">(</span><span class="nx">t</span> <span class="nx">TestingT</span><span class="p">,</span> <span class="nx">path</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">msgAndArgs</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="kt">bool</span>
+</pre></div>
+</div>
+</section>
+<section id="id22">
+<h3>5. 表驱动测试<a class="headerlink" href="#id22" title="永久链接至标题"></a></h3>
+<p>testify的使用也可以简化表驱动测试之类的方法：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;github.com/stretchr/testify/assert&quot;</span>
+	<span class="s">&quot;testing&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">TestAdd</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">ass</span> <span class="o">:=</span> <span class="nx">assert</span><span class="p">.</span><span class="nx">New</span><span class="p">(</span><span class="nx">t</span><span class="p">)</span>
+
+	<span class="kd">var</span> <span class="nx">cases</span> <span class="p">=</span> <span class="p">[]</span><span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">lhs</span>      <span class="kt">int</span> <span class="c1">// 左侧运算对象</span>
+		<span class="nx">rhs</span>      <span class="kt">int</span> <span class="c1">// 右侧运算对象</span>
+		<span class="nx">expected</span> <span class="kt">int</span>
+	<span class="p">}{</span>
+		<span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">},</span>
+		<span class="p">{</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">},</span>
+		<span class="p">{</span><span class="mi">9999</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10000</span><span class="p">},</span>
+		<span class="p">{</span><span class="mi">555</span><span class="p">,</span> <span class="mi">444</span><span class="p">,</span> <span class="mi">999</span><span class="p">},</span>
+	<span class="p">}</span>
+
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">c</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">cases</span> <span class="p">{</span>
+		<span class="nx">ass</span><span class="p">.</span><span class="nx">Equal</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">expected</span><span class="p">,</span> <span class="nx">Add</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">lhs</span><span class="p">,</span> <span class="nx">c</span><span class="p">.</span><span class="nx">rhs</span><span class="p">))</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="永久链接至标题"></a></h2>
+<p>[1] https://zhuanlan.zhihu.com/p/267341653</p>
+<p>[2] https://www.cnblogs.com/jssyjam/p/10728801.html</p>
+<p>[3] http://www.lampnick.com/php/732</p>
+<p>[4] https://www.codercto.com/a/44507.html</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

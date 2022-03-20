@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Context &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC1%E7%AB%A0%20Go%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/index.html">第1章 Go基本类型</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Context</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第6章 Go并发编程/Context.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="context">
+<h1>Context<a class="headerlink" href="#context" title="永久链接至标题"></a></h1>
+<section id="id1">
+<h2>简介<a class="headerlink" href="#id1" title="永久链接至标题"></a></h2>
+<p>Go1.7之后正式将golang.org/x/net/context包中的Context纳入标准库，它主要用于保存goroutine的上下文（运行状态、环境和现场等信息），几乎成为了并发控制和超时控制的标准做法。</p>
+<p>举个rpc服务端开发的例子：对于同一个http/thrift请求可能会开启多个同步/异步的goroutine对请求进行处理，这些基于同一个请求的goroutine一方面需要共享一些信息，另一方面当request超时时也应该被提前结束，这种情况下正是Conetxt大展拳脚的时候。</p>
+</section>
+<section id="id2">
+<h2>定义<a class="headerlink" href="#id2" title="永久链接至标题"></a></h2>
+<p>Context也被称为上下文，它是一个接口类型，定义如下：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// A Context carries a deadline, a cancellation signal, and other values across</span>
+<span class="c1">// API boundaries.</span>
+<span class="c1">//</span>
+<span class="c1">// Context&#39;s methods may be called by multiple goroutines simultaneously.</span>
+<span class="kd">type</span> <span class="nx">Context</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="c1">// Deadline returns the time when work done on behalf of this context</span>
+	<span class="c1">// should be canceled. Deadline returns ok==false when no deadline is</span>
+	<span class="c1">// set. Successive calls to Deadline return the same results.</span>
+	<span class="nx">Deadline</span><span class="p">()</span> <span class="p">(</span><span class="nx">deadline</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Time</span><span class="p">,</span> <span class="nx">ok</span> <span class="kt">bool</span><span class="p">)</span>
+
+	<span class="c1">// Done returns a channel that&#39;s closed when work done on behalf of this</span>
+	<span class="c1">// context should be canceled. Done may return nil if this context can</span>
+	<span class="c1">// never be canceled. Successive calls to Done return the same value.</span>
+	<span class="c1">// The close of the Done channel may happen asynchronously,</span>
+	<span class="c1">// after the cancel function returns.</span>
+	<span class="c1">//</span>
+	<span class="c1">// WithCancel arranges for Done to be closed when cancel is called;</span>
+	<span class="c1">// WithDeadline arranges for Done to be closed when the deadline</span>
+	<span class="c1">// expires; WithTimeout arranges for Done to be closed when the timeout</span>
+	<span class="c1">// elapses.</span>
+	<span class="c1">//</span>
+	<span class="c1">// Done is provided for use in select statements:</span>
+	<span class="c1">//</span>
+	<span class="c1">//  // Stream generates values with DoSomething and sends them to out</span>
+	<span class="c1">//  // until DoSomething returns an error or ctx.Done is closed.</span>
+	<span class="c1">//  func Stream(ctx context.Context, out chan&lt;- Value) error {</span>
+	<span class="c1">//  	for {</span>
+	<span class="c1">//  		v, err := DoSomething(ctx)</span>
+	<span class="c1">//  		if err != nil {</span>
+	<span class="c1">//  			return err</span>
+	<span class="c1">//  		}</span>
+	<span class="c1">//  		select {</span>
+	<span class="c1">//  		case &lt;-ctx.Done():</span>
+	<span class="c1">//  			return ctx.Err()</span>
+	<span class="c1">//  		case out &lt;- v:</span>
+	<span class="c1">//  		}</span>
+	<span class="c1">//  	}</span>
+	<span class="c1">//  }</span>
+	<span class="c1">//</span>
+	<span class="c1">// See https://blog.golang.org/pipelines for more examples of how to use</span>
+	<span class="c1">// a Done channel for cancellation.</span>
+	<span class="nx">Done</span><span class="p">()</span> <span class="o">&lt;-</span><span class="kd">chan</span> <span class="kd">struct</span><span class="p">{}</span>
+
+	<span class="c1">// If Done is not yet closed, Err returns nil.</span>
+	<span class="c1">// If Done is closed, Err returns a non-nil error explaining why:</span>
+	<span class="c1">// Canceled if the context was canceled</span>
+	<span class="c1">// or DeadlineExceeded if the context&#39;s deadline passed.</span>
+	<span class="c1">// After Err returns a non-nil error, successive calls to Err return the same error.</span>
+	<span class="nx">Err</span><span class="p">()</span> <span class="kt">error</span>
+
+	<span class="c1">// Value returns the value associated with this context for key, or nil</span>
+	<span class="c1">// if no value is associated with key. Successive calls to Value with</span>
+	<span class="c1">// the same key returns the same result.</span>
+	<span class="c1">//</span>
+	<span class="c1">// Use context values only for request-scoped data that transits</span>
+	<span class="c1">// processes and API boundaries, not for passing optional parameters to</span>
+	<span class="c1">// functions.</span>
+	<span class="c1">//</span>
+	<span class="c1">// A key identifies a specific value in a Context. Functions that wish</span>
+	<span class="c1">// to store values in Context typically allocate a key in a global</span>
+	<span class="c1">// variable then use that key as the argument to context.WithValue and</span>
+	<span class="c1">// Context.Value. A key can be any type that supports equality;</span>
+	<span class="c1">// packages should define keys as an unexported type to avoid</span>
+	<span class="c1">// collisions.</span>
+	<span class="c1">//</span>
+	<span class="c1">// Packages that define a Context key should provide type-safe accessors</span>
+	<span class="c1">// for the values stored using that key:</span>
+	<span class="c1">//</span>
+	<span class="c1">// 	// Package user defines a User type that&#39;s stored in Contexts.</span>
+	<span class="c1">// 	package user</span>
+	<span class="c1">//</span>
+	<span class="c1">// 	import &quot;context&quot;</span>
+	<span class="c1">//</span>
+	<span class="c1">// 	// User is the type of value stored in the Contexts.</span>
+	<span class="c1">// 	type User struct {...}</span>
+	<span class="c1">//</span>
+	<span class="c1">// 	// key is an unexported type for keys defined in this package.</span>
+	<span class="c1">// 	// This prevents collisions with keys defined in other packages.</span>
+	<span class="c1">// 	type key int</span>
+	<span class="c1">//</span>
+	<span class="c1">// 	// userKey is the key for user.User values in Contexts. It is</span>
+	<span class="c1">// 	// unexported; clients use user.NewContext and user.FromContext</span>
+	<span class="c1">// 	// instead of using this key directly.</span>
+	<span class="c1">// 	var userKey key</span>
+	<span class="c1">//</span>
+	<span class="c1">// 	// NewContext returns a new Context that carries value u.</span>
+	<span class="c1">// 	func NewContext(ctx context.Context, u *User) context.Context {</span>
+	<span class="c1">// 		return context.WithValue(ctx, userKey, u)</span>
+	<span class="c1">// 	}</span>
+	<span class="c1">//</span>
+	<span class="c1">// 	// FromContext returns the User value stored in ctx, if any.</span>
+	<span class="c1">// 	func FromContext(ctx context.Context) (*User, bool) {</span>
+	<span class="c1">// 		u, ok := ctx.Value(userKey).(*User)</span>
+	<span class="c1">// 		return u, ok</span>
+	<span class="c1">// 	}</span>
+	<span class="nx">Value</span><span class="p">(</span><span class="nx">key</span> <span class="kd">interface</span><span class="p">{})</span> <span class="kd">interface</span><span class="p">{}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Deadline()</span></code>：返回Context被取消的时间，如果没有设置deadline则返回的ok为false</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Done()</span></code>：返回一个channel，此channel在Context被取消时关闭，此channel为nil时意味着这个Context永远不会被取消</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Err()</span></code>：仅有在<code class="docutils literal notranslate"><span class="pre">Done()</span></code>方法返回的channel被关闭时才会返回非空值，返回Canceled错误表示Context已经被取消，返回DeadlineExceeded错误表示该Context已经达到了deadline</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Value()</span></code>：返回此Context中某个key对应的值，不存在该key时返回nil，需要注意的是该方法只应该用在程序和API中传递和请求相关的元数据，而不应该被用于传递可选的参数</p></li>
+</ul>
+</section>
+<section id="id3">
+<h2>使用Context的原因<a class="headerlink" href="#id3" title="永久链接至标题"></a></h2>
+<p>前面我们提到可以使用select和channel对创建的goroutine进行超时限制：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;fmt&quot;</span>
+	<span class="s">&quot;sync&quot;</span>
+	<span class="s">&quot;time&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">wg</span> <span class="o">:=</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span><span class="p">{}</span>
+	<span class="nx">wg</span><span class="p">.</span><span class="nx">Add</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="c1">// 使用channel进行超时限制, 超时时间为10秒</span>
+	<span class="nx">timeout</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">bool</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+		<span class="nx">timeout</span> <span class="o">&lt;-</span> <span class="kc">true</span>
+	<span class="p">}()</span>
+
+	<span class="c1">// 异步出去的goroutine, 超时后自动停止</span>
+	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nx">Done</span><span class="p">()</span>
+		<span class="nx">ticker</span> <span class="o">:=</span> <span class="nx">time</span><span class="p">.</span><span class="nx">NewTicker</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+		<span class="k">for</span> <span class="nx">_</span> <span class="p">=</span> <span class="k">range</span> <span class="nx">ticker</span><span class="p">.</span><span class="nx">C</span> <span class="p">{</span>
+			<span class="k">select</span> <span class="p">{</span>
+			<span class="k">case</span> <span class="o">&lt;-</span> <span class="nx">timeout</span><span class="p">:</span>
+				<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;timeout and quit&quot;</span><span class="p">)</span>
+				<span class="k">return</span>
+			<span class="k">default</span><span class="p">:</span>
+				<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;do something&quot;</span><span class="p">)</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}()</span>
+
+	<span class="nx">wg</span><span class="p">.</span><span class="nx">Wait</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">do</span> <span class="nx">something</span>
+<span class="nx">do</span> <span class="nx">something</span>
+<span class="nx">do</span> <span class="nx">something</span>
+<span class="nx">do</span> <span class="nx">something</span>
+<span class="nx">do</span> <span class="nx">something</span>
+<span class="nx">do</span> <span class="nx">something</span>
+<span class="nx">do</span> <span class="nx">something</span>
+<span class="nx">do</span> <span class="nx">something</span>
+<span class="nx">do</span> <span class="nx">something</span>
+<span class="nx">timeout</span> <span class="nx">and</span> <span class="nx">quit</span>
+</pre></div>
+</div>
+<p>使用context后我们不仅可以更加简洁地进行goroutine的超时控制，还可以在任意时间点或者任意事件触发时取消context，还可以实现上下文信息在goroutine之间传递。</p>
+<blockquote>
+<div><p>使用WithCancel函数可以返回一个context对应的取消函数，当这个函数被调用时就会取消context。此外我们还可以使用WithDeadline和WithTimeout函数，前者用于定时取消而后者用于超时取消。</p>
+</div></blockquote>
+<section id="goroutine">
+<h3>1. 取消单个goroutine<a class="headerlink" href="#goroutine" title="永久链接至标题"></a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;context&quot;</span>
+	<span class="s">&quot;fmt&quot;</span>
+	<span class="s">&quot;time&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">ctx</span><span class="p">,</span> <span class="nx">cancelFunc</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">WithCancel</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">Background</span><span class="p">())</span>
+
+	<span class="c1">// goroutine: 每秒循环处理事务</span>
+	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="p">{</span>
+			<span class="k">select</span> <span class="p">{</span>
+			<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">Done</span><span class="p">():</span>
+				<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;done and quit&quot;</span><span class="p">)</span>
+				<span class="k">return</span>
+			<span class="k">default</span><span class="p">:</span>
+				<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;do something...&quot;</span><span class="p">)</span>
+				<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}()</span>
+
+	<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">10</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+	<span class="c1">// 控制goroutine结束</span>
+	<span class="nx">cancelFunc</span><span class="p">()</span>
+	<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="nx">done</span> <span class="nx">and</span> <span class="nx">quit</span>
+
+<span class="nx">Process</span> <span class="nx">finished</span> <span class="nx">with</span> <span class="nx">the</span> <span class="nx">exit</span> <span class="nx">code</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3>2. 取消多个goroutine<a class="headerlink" href="#id4" title="永久链接至标题"></a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;context&quot;</span>
+	<span class="s">&quot;fmt&quot;</span>
+	<span class="s">&quot;time&quot;</span>
+<span class="p">)</span>
+
+<span class="c1">// 工作函数: 每秒循环处理事务</span>
+<span class="kd">func</span> <span class="nx">worker</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">index</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="p">{</span>
+		<span class="k">select</span> <span class="p">{</span>
+		<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">Done</span><span class="p">():</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;[worker %d]done and quit\n&quot;</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span>
+			<span class="k">return</span>
+		<span class="k">default</span><span class="p">:</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;[worker %d]do something...\n&quot;</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span>
+			<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">ctx</span><span class="p">,</span> <span class="nx">cancelFunc</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">WithCancel</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">Background</span><span class="p">())</span>
+
+	<span class="c1">// 启动三个goroutine</span>
+	<span class="k">go</span> <span class="nx">worker</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="k">go</span> <span class="nx">worker</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="k">go</span> <span class="nx">worker</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+	<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+	<span class="c1">// 控制goroutine结束</span>
+	<span class="nx">cancelFunc</span><span class="p">()</span>
+	<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">2</span><span class="p">]</span><span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">1</span><span class="p">]</span><span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">0</span><span class="p">]</span><span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">0</span><span class="p">]</span><span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">1</span><span class="p">]</span><span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">2</span><span class="p">]</span><span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">0</span><span class="p">]</span><span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">1</span><span class="p">]</span><span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">2</span><span class="p">]</span><span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">1</span><span class="p">]</span><span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">2</span><span class="p">]</span><span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">0</span><span class="p">]</span><span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">0</span><span class="p">]</span><span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">2</span><span class="p">]</span><span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">1</span><span class="p">]</span><span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">2</span><span class="p">]</span><span class="nx">done</span> <span class="nx">and</span> <span class="nx">quit</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">1</span><span class="p">]</span><span class="nx">done</span> <span class="nx">and</span> <span class="nx">quit</span>
+<span class="p">[</span><span class="nx">worker</span> <span class="mi">0</span><span class="p">]</span><span class="nx">done</span> <span class="nx">and</span> <span class="nx">quit</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3>3. 传递上下文<a class="headerlink" href="#id5" title="永久链接至标题"></a></h3>
+<p>context当然附带有传递上下文信息的功能，可以使用WithValue函数增加键值对：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;context&quot;</span>
+	<span class="s">&quot;fmt&quot;</span>
+	<span class="s">&quot;time&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">ctx</span><span class="p">,</span> <span class="nx">cancelFunc</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">WithCancel</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">Background</span><span class="p">())</span>
+
+	<span class="c1">// 设置对应的上下文字段</span>
+	<span class="nx">ctxValue</span> <span class="o">:=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">WithValue</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="s">&quot;tomocat&quot;</span><span class="p">)</span>
+
+	<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">for</span> <span class="p">{</span>
+			<span class="k">select</span> <span class="p">{</span>
+			<span class="k">case</span> <span class="o">&lt;-</span><span class="nx">ctxValue</span><span class="p">.</span><span class="nx">Done</span><span class="p">():</span>
+				<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;cancel context, name:%v\n&quot;</span><span class="p">,</span> <span class="nx">ctxValue</span><span class="p">.</span><span class="nx">Value</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">))</span>
+				<span class="k">return</span>
+			<span class="k">default</span><span class="p">:</span>
+				<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;do something...&quot;</span><span class="p">)</span>
+				<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}()</span>
+
+	<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+	<span class="nx">cancelFunc</span><span class="p">()</span>
+	<span class="nx">time</span><span class="p">.</span><span class="nx">Sleep</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="nx">time</span><span class="p">.</span><span class="nx">Second</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="nx">do</span> <span class="nx">something</span><span class="o">...</span>
+<span class="nx">cancel</span> <span class="nx">context</span><span class="p">,</span> <span class="nx">name</span><span class="p">:</span><span class="nx">tomocat</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id6">
+<h2>官方提供的四类Context实现<a class="headerlink" href="#id6" title="永久链接至标题"></a></h2>
+<p>前面提到Context本质上是一个接口，只要实现了它定义的四个方法就可以认为实现了Context接口。四类Context如下所示：</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>实现</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>emptyCtx</td>
+<td>空Context，实现的函数也是返回nil，仅仅是实现了Context接口而已</td>
+</tr>
+<tr>
+<td>cancelCtx</td>
+<td>继承自Context，同时实现了cancel方法</td>
+</tr>
+<tr>
+<td>timerCtx</td>
+<td>继承自cancelCtx，增加了timeout机制</td>
+</tr>
+<tr>
+<td>valueCtx</td>
+<td>存储键值对数据</td>
+</tr>
+</tbody>
+</table></section>
+<section id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="永久链接至标题"></a></h2>
+<p>[1] https://zhuanlan.zhihu.com/p/110085652</p>
+<p>[2] http://c.biancheng.net/view/5714.html</p>
+<p>[3] https://zhuanlan.zhihu.com/p/110085652</p>
+<p>[4] https://blog.csdn.net/u011957758/article/details/82948750</p>
+<p>[5] https://www.jianshu.com/p/dcbd87eb1a3f</p>
+<p>[6] https://developer.51cto.com/art/202104/660097.htm</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

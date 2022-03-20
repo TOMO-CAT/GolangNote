@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Golang类型之间相互转换 &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" />
+    <link rel="next" title="Golang数值类型" href="%E6%95%B0%E5%80%BC%E7%B1%BB%E5%9E%8B.html" />
+    <link rel="prev" title="Golang变量与常量" href="%E5%8F%98%E9%87%8F%E4%B8%8E%E5%B8%B8%E9%87%8F.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第1章 Go基本类型</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="%E5%8F%98%E9%87%8F%E4%B8%8E%E5%B8%B8%E9%87%8F.html">Golang变量与常量</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Golang类型之间相互转换</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#string">string和数值类型</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#stringint">1. string和int</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stringint64">2. string和int64</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">3. 一般数值转化成string</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#intint64">int和int64</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reference">Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="%E6%95%B0%E5%80%BC%E7%B1%BB%E5%9E%8B.html">Golang数值类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%87%E7%89%87.html">数组和切片</a></li>
+<li class="toctree-l2"><a class="reference internal" href="byte%E3%80%81rune%E5%92%8Cstring.html">Golang byte、rune和string</a></li>
+<li class="toctree-l2"><a class="reference internal" href="map.html">map</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第1章 Go基本类型</a> &raquo;</li>
+      <li>Golang类型之间相互转换</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第1章 Go基本类型/类型之间相互转换.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="golang">
+<h1>Golang类型之间相互转换<a class="headerlink" href="#golang" title="永久链接至标题"></a></h1>
+<section id="string">
+<h2>string和数值类型<a class="headerlink" href="#string" title="永久链接至标题"></a></h2>
+<section id="stringint">
+<h3>1. string和int<a class="headerlink" href="#stringint" title="永久链接至标题"></a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/* string转int */</span>
+<span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">Atoi</span><span class="p">(</span><span class="kt">string</span><span class="p">)</span>
+
+<span class="cm">/* int转string */</span>
+<span class="kt">string</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">Itoa</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Warning:</strong> In a plain <a class="reference external" href="https://yourbasic.org/golang/conversions/">conversion</a> the value is interpreted as a Unicode code point, and the resulting string will contain the character represented by that code point, encoded in UTF-8.</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">s</span> <span class="o">:=</span> <span class="nb">string</span><span class="p">(</span><span class="mi">97</span><span class="p">)</span> <span class="c1">// s == &quot;a&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="stringint64">
+<h3>2. string和int64<a class="headerlink" href="#stringint64" title="永久链接至标题"></a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/* string转int64 */</span>
+<span class="kt">int64</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">ParseInt</span><span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+
+<span class="cm">/* int64转string */</span>
+<span class="kt">string</span> <span class="o">:=</span> <span class="nx">strconv</span><span class="p">.</span><span class="nx">FormatInt</span><span class="p">(</span><span class="kt">int64</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h3>3. 一般数值转化成string<a class="headerlink" href="#id1" title="永久链接至标题"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">fmt.Sprintf</span></code>是一个将数值转化为string的通用函数，可以设置宽度、对齐方式和是否显示符号位。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">s</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Sprintf</span><span class="p">(</span><span class="s">&quot;%+8d&quot;</span><span class="p">,</span> <span class="mi">97</span><span class="p">)</span>
+<span class="c1">// s == &quot;     +97&quot; (width 8, right justify, always show sign)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="intint64">
+<h2>int和int64<a class="headerlink" href="#intint64" title="永久链接至标题"></a></h2>
+<p>Golang中的int类型大小与平台相关，可能是32位或者64位，因此将int装成int64不会损失任何信息：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/* int转int64 */</span>
+<span class="kd">var</span> <span class="nx">n</span> <span class="kt">int</span> <span class="p">=</span> <span class="mi">97</span>
+<span class="nx">m</span> <span class="o">:=</span> <span class="nb">int64</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span>  <span class="c1">// safe</span>
+</pre></div>
+</div>
+<p>反之，如果我们要将int64转成int，就可能存在被截断的风险：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/* int64转int */</span>
+<span class="kd">var</span> <span class="nx">m</span> <span class="kt">int64</span> <span class="p">=</span> <span class="mi">2</span> <span class="o">&lt;&lt;</span> <span class="mi">32</span>
+<span class="nx">n</span> <span class="o">:=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span>     <span class="c1">// truncated on machines with 32-bit ints</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span>  <span class="c1">// either 0 or 4,294,967,296</span>
+</pre></div>
+</div>
+</section>
+<section id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="永久链接至标题"></a></h2>
+<p>[1] https://yourbasic.org/golang/convert-int-to-string/</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="%E5%8F%98%E9%87%8F%E4%B8%8E%E5%B8%B8%E9%87%8F.html" class="btn btn-neutral float-left" title="Golang变量与常量" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="%E6%95%B0%E5%80%BC%E7%B1%BB%E5%9E%8B.html" class="btn btn-neutral float-right" title="Golang数值类型" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>接口与多态 &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC1%E7%AB%A0%20Go%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/index.html">第1章 Go基本类型</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>接口与多态</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第5章 Go面向对象/接口与多态.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>接口与多态<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+<section id="go">
+<h2>Go与其他语言的接口<a class="headerlink" href="#go" title="永久链接至标题"></a></h2>
+<section id="id2">
+<h3>1. 其他语言的接口<a class="headerlink" href="#id2" title="永久链接至标题"></a></h3>
+<p>除Go以外的其他语言，为了实现一个接口，必须显式从该接口继承：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">interface</span> <span class="nx">IFoo</span> <span class="p">{</span>
+    <span class="nx">void</span> <span class="nx">Bar</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// java</span>
+<span class="nx">class</span> <span class="nx">Foo</span> <span class="nx">implements</span> <span class="nx">IFoo</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+<span class="p">}</span>
+
+<span class="c1">// C++</span>
+<span class="nx">class</span> <span class="nx">Foo</span> <span class="p">:</span> <span class="nx">public</span> <span class="nx">IFoo</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+<span class="p">}</span>
+
+<span class="nx">IFoo</span><span class="o">*</span> <span class="nx">foo</span> <span class="p">=</span> <span class="nx">new</span> <span class="nx">Foo</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3>2. Go中的接口<a class="headerlink" href="#id3" title="永久链接至标题"></a></h3>
+<p>在面向对象领域中，我们一般这么介绍接口：</p>
+<blockquote>
+<div><p>接口定义一个对象的行为。但是仅仅只定义了对象可以做什么，实现细节交给对象本身去确定。</p>
+</div></blockquote>
+<p>在Go中，接口就是方法签名<code class="docutils literal notranslate"><span class="pre">method</span> <span class="pre">signature</span></code>的集合，当一个类型实现了接口的所有方法，我们就称该类型实现了这个接口。</p>
+</section>
+</section>
+<section id="id4">
+<h2>接口使用方法<a class="headerlink" href="#id4" title="永久链接至标题"></a></h2>
+<section id="id5">
+<h3>1. 定义接口<a class="headerlink" href="#id5" title="永久链接至标题"></a></h3>
+<p>定义一个接口可以进行文件读写：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">IFile</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Read</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+    <span class="nx">Write</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+    <span class="nx">Seek</span> <span class="p">(</span><span class="nx">off</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">whence</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="nx">pos</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+    <span class="nx">Close</span><span class="p">()</span> <span class="kt">error</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3>2. 实现接口<a class="headerlink" href="#id6" title="永久链接至标题"></a></h3>
+<p>我们定义一个<code class="docutils literal notranslate"><span class="pre">File</span></code>类型，只要实现了<code class="docutils literal notranslate"><span class="pre">IFile</span></code>接口的所有方法就可以认为实现了该接口：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">File</span> <span class="kd">struct</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">File</span><span class="p">)</span> <span class="nx">Read</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// ...</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">File</span><span class="p">)</span> <span class="nx">Write</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// ...</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">File</span><span class="p">)</span> <span class="nx">Seek</span><span class="p">(</span><span class="nx">off</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">whence</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="nx">pos</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// ...</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">f</span> <span class="o">*</span><span class="nx">File</span><span class="p">)</span> <span class="nx">Close</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="c1">// ...</span>
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3>3. 接口赋值<a class="headerlink" href="#id7" title="永久链接至标题"></a></h3>
+<p>接口赋值在Go中包含两种情况：</p>
+<ul class="simple">
+<li><p>将对象实例赋值给接口</p></li>
+<li><p>将一个接口赋值给另一个接口</p></li>
+</ul>
+<section id="id8">
+<h4>3.1 将对象实例赋值给接口<a class="headerlink" href="#id8" title="永久链接至标题"></a></h4>
+<p>我们现在构造一个特殊的例子，意在指出将对象实例赋值给接口时可能出现的错误：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/*</span>
+<span class="cm">IBook接口</span>
+<span class="cm">*/</span>
+<span class="kd">type</span> <span class="nx">IBook</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="c1">// 获取书籍名称</span>
+	<span class="nx">GetBookName</span><span class="p">()</span> <span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span>
+	<span class="c1">// 修改书籍名称</span>
+	<span class="nx">ChangeBookName</span><span class="p">(</span><span class="nx">newName</span> <span class="kt">string</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">定义MyBook类型实现了IBook接口</span>
+<span class="cm">*/</span>
+<span class="kd">type</span> <span class="nx">MyBook</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Name</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="c1">// 值传递: 不修改数据成员</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">mb</span> <span class="nx">MyBook</span><span class="p">)</span> <span class="nx">GetBookName</span><span class="p">()</span> <span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">mb</span><span class="p">.</span><span class="nx">Name</span>
+<span class="p">}</span>
+
+<span class="c1">// 指针传递: 修改数据成员</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">mb</span> <span class="o">*</span><span class="nx">MyBook</span><span class="p">)</span> <span class="nx">ChangeBookName</span><span class="p">(</span><span class="nx">newName</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">mb</span><span class="p">.</span><span class="nx">Name</span> <span class="p">=</span> <span class="nx">newName</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>如果我们要将对象赋值给接口，那么下述两种写法是不同的：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// 构造MyBook类型的对象实例</span>
+<span class="kd">var</span> <span class="nx">mb</span> <span class="p">=</span> <span class="nx">MyBook</span><span class="p">{</span>
+    <span class="nx">Name</span><span class="p">:</span> <span class="s">&quot;TOMO-CAT&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1">// 将对象实例赋值给接口</span>
+<span class="kd">var</span> <span class="nx">book</span> <span class="nx">IBook</span> <span class="p">=</span> <span class="o">&amp;</span><span class="nx">mb</span>  <span class="c1">// 正确</span>
+<span class="kd">var</span> <span class="nx">book</span> <span class="nx">IBook</span> <span class="p">=</span> <span class="nx">mb</span>   <span class="c1">// 错误</span>
+</pre></div>
+</div>
+<p>错误的语句编译期间报错如下：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./main.go:10:6: cannot use mb <span class="o">(</span><span class="nb">type</span> MyBook<span class="o">)</span> as <span class="nb">type</span> IBook <span class="k">in</span> assignment:
+	MyBook does not implement IBook <span class="o">(</span>ChangeBookName method has pointer receiver<span class="o">)</span>
+
+Compilation finished with <span class="nb">exit</span> code <span class="m">2</span>
+</pre></div>
+</div>
+<p>原因在于Go可以根据值传递版本的方法成员自动生成指针传递版本的方法成员，因此<code class="docutils literal notranslate"><span class="pre">*MyBook</span></code>类型就既存在<code class="docutils literal notranslate"><span class="pre">GetBookName()</span></code>方法和<code class="docutils literal notranslate"><span class="pre">ChangeBookName()</span></code>方法，从而实现了<code class="docutils literal notranslate"><span class="pre">IBook</span></code>接口。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// 值传递: 不修改数据成员</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">mb</span> <span class="nx">MyBook</span><span class="p">)</span> <span class="nx">GetBookName</span><span class="p">()</span> <span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">mb</span><span class="p">.</span><span class="nx">Name</span>
+<span class="p">}</span>
+
+<span class="c1">// 以下是Go编译器根据上述值传递版本的方法成员自动生成的</span>
+<span class="kd">func</span> <span class="p">(</span><span class="nx">mb</span> <span class="o">*</span><span class="nx">MyBook</span><span class="p">)</span> <span class="nx">GetBookName</span><span class="p">()</span> <span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">(</span><span class="o">*</span><span class="nx">mb</span><span class="p">).</span><span class="nx">Name</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>但是类型<code class="docutils literal notranslate"><span class="pre">MyBook</span></code>缺少对应的<code class="docutils literal notranslate"><span class="pre">ChangeBookName()</span></code>方法，原因在于<code class="docutils literal notranslate"><span class="pre">ChangeBookName()</span></code>方法通过指针传递的方式修改了数据成员，即使Go语言自动生成了该方法成员的值传递版本也不会对实际操作的对象产生影响（即没法修改对象的<code class="docutils literal notranslate"><span class="pre">BookName</span></code>）。因此<code class="docutils literal notranslate"><span class="pre">MyBook</span></code>类型不能复制给<code class="docutils literal notranslate"><span class="pre">IBook</span></code>接口。</p>
+</section>
+<section id="id9">
+<h4>3.2 将一个接口赋值给另一个接口<a class="headerlink" href="#id9" title="永久链接至标题"></a></h4>
+<p>在Go语言中只要两个接口有相同的方法集合，那么就可以相互赋值（在Go中认为这两个接口是等价的）。举个例子，下述两个接口定义在不同的包中，但是定义相同的方法集合：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">foo</span>
+
+<span class="kd">type</span> <span class="nx">IFoo</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Read</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+    <span class="nx">Write</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">bar</span>
+
+<span class="kd">type</span> <span class="nx">IBar</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Read</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+    <span class="nx">Write</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>在Go语言中这两个接口是等价的，可以互相赋值：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">file1</span> <span class="nx">foo</span><span class="p">.</span><span class="nx">IFoo</span>
+	<span class="kd">var</span> <span class="nx">file2</span> <span class="nx">bar</span><span class="p">.</span><span class="nx">IBar</span>
+	<span class="nx">file1</span> <span class="p">=</span> <span class="nx">file2</span>
+	<span class="nx">file2</span> <span class="p">=</span> <span class="nx">file1</span>
+
+	<span class="k">return</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>另外接口赋值并不要求两个接口完全等价，如果接口A方法集合是接口B方法集合的子集，那么接口B可以赋值给接口A，反之不成立：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">Writer</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nx">Write</span><span class="p">(</span><span class="nx">buf</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">file1</span> <span class="nx">foo</span><span class="p">.</span><span class="nx">IFoo</span>
+	<span class="kd">var</span> <span class="nx">file3</span> <span class="nx">Writer</span>
+
+	<span class="nx">file3</span> <span class="p">=</span> <span class="nx">file1</span>  <span class="c1">// 正确</span>
+	<span class="nx">file1</span> <span class="p">=</span> <span class="nx">file3</span>  <span class="c1">// 错误</span>
+
+	<span class="k">return</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id10">
+<h3>4. 类型查询<a class="headerlink" href="#id10" title="永久链接至标题"></a></h3>
+<p>在Go语言中我们可以查询接口指向对象实例的类型，比如常见的空接口<code class="docutils literal notranslate"><span class="pre">interface{}</span></code>类型查询：</p>
+<blockquote>
+<div><p>由于Go语言中任何对象实例都满足空接口<code class="docutils literal notranslate"><span class="pre">interface{}</span></code>，因此可以认为空接口是指向任何对象的Any类型。</p>
+</div></blockquote>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">Stringer</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">String</span><span class="p">()</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="c1">// Println的简单实现</span>
+<span class="kd">func</span> <span class="nx">Println</span><span class="p">(</span><span class="nx">args</span> <span class="o">...</span><span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">arg</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">args</span> <span class="p">{</span>
+        <span class="k">switch</span> <span class="nx">v</span> <span class="o">:=</span> <span class="nx">arg</span><span class="p">.(</span><span class="kd">type</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// 查询是否是int, string等内置类型</span>
+        <span class="k">case</span> <span class="kt">int</span><span class="p">:</span>
+        	<span class="c1">// ...</span>
+    	<span class="k">case</span> <span class="kt">string</span><span class="p">:</span>
+        	<span class="c1">// ...</span>
+    	<span class="k">default</span><span class="p">:</span>
+        	<span class="c1">// 查询是否实现了某接口</span>
+        	<span class="k">if</span> <span class="nx">v</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">arg</span><span class="p">.(</span><span class="nx">Stringer</span><span class="p">);</span> <span class="nx">ok</span> <span class="p">{</span>
+            	<span class="nx">val</span> <span class="o">:=</span> <span class="nx">v</span><span class="p">.</span><span class="nx">String</span><span class="p">()</span>
+            	<span class="c1">// ...</span>
+        	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            	<span class="c1">// ...</span>
+        	<span class="p">}</span>
+    	<span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h3>5. 接口组合<a class="headerlink" href="#id11" title="永久链接至标题"></a></h3>
+<p>可以把两个接口组合到一起，比如将<code class="docutils literal notranslate"><span class="pre">io.Reader</span></code>和<code class="docutils literal notranslate"><span class="pre">io.Writer</span></code>组合成<code class="docutils literal notranslate"><span class="pre">io.ReadWriter</span></code>：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">type</span> <span class="nx">ReadWriter</span> <span class="kd">interface</span> <span class="p">{</span>
+    <span class="nx">Reader</span>
+    <span class="nx">Writer</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id12">
+<h2>接口实现多态<a class="headerlink" href="#id12" title="永久链接至标题"></a></h2>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/*</span>
+<span class="cm">IBook接口</span>
+<span class="cm">*/</span>
+<span class="kd">type</span> <span class="nx">IBook</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="c1">// 获取书籍名称</span>
+	<span class="nx">GetBookName</span><span class="p">()</span> <span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/*</span>
+<span class="cm">定义MyBook类型实现了IBook接口</span>
+<span class="cm">*/</span>
+<span class="kd">type</span> <span class="nx">MyBook</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Name</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">mb</span> <span class="nx">MyBook</span><span class="p">)</span> <span class="nx">GetBookName</span><span class="p">()</span> <span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="nx">mb</span><span class="p">.</span><span class="nx">Name</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">TestBook</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Name</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="p">(</span><span class="nx">tb</span> <span class="nx">TestBook</span><span class="p">)</span> <span class="nx">GetBookName</span><span class="p">()</span> <span class="p">(</span><span class="nx">name</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="s">&quot;TestBook&quot;</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">book1</span> <span class="o">:=</span> <span class="nx">MyBook</span><span class="p">{</span>
+		<span class="nx">Name</span><span class="p">:</span> <span class="s">&quot;TOMOCAT&quot;</span><span class="p">,</span>
+	<span class="p">}</span>
+	<span class="nx">book2</span> <span class="o">:=</span> <span class="nx">TestBook</span><span class="p">{}</span>
+	<span class="nx">bookList</span> <span class="o">:=</span> <span class="p">[]</span><span class="nx">IBook</span><span class="p">{</span><span class="nx">book1</span><span class="p">,</span> <span class="nx">book2</span><span class="p">}</span>
+
+	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">book</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">bookList</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">book</span><span class="p">.</span><span class="nx">GetBookName</span><span class="p">())</span>
+	<span class="p">}</span>
+	
+	<span class="k">return</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

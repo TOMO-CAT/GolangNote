@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Golang byte、rune和string &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" />
+    <link rel="next" title="map" href="map.html" />
+    <link rel="prev" title="数组和切片" href="%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%87%E7%89%87.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第1章 Go基本类型</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="%E5%8F%98%E9%87%8F%E4%B8%8E%E5%B8%B8%E9%87%8F.html">Golang变量与常量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="%E7%B1%BB%E5%9E%8B%E4%B9%8B%E9%97%B4%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2.html">Golang类型之间相互转换</a></li>
+<li class="toctree-l2"><a class="reference internal" href="%E6%95%B0%E5%80%BC%E7%B1%BB%E5%9E%8B.html">Golang数值类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%87%E7%89%87.html">数组和切片</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Golang byte、rune和string</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#string">string</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id1">1. 字符串操作</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">2. string特性</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">3. 遍历字符串</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#byterune">byte与rune</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">1. 打印单个字符</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#runebyte">2. rune和byte的大小</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="map.html">map</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第1章 Go基本类型</a> &raquo;</li>
+      <li>Golang byte、rune和string</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第1章 Go基本类型/byte、rune和string.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="golang-byterunestring">
+<h1>Golang byte、rune和string<a class="headerlink" href="#golang-byterunestring" title="永久链接至标题"></a></h1>
+<section id="string">
+<h2>string<a class="headerlink" href="#string" title="永久链接至标题"></a></h2>
+<section id="id1">
+<h3>1. 字符串操作<a class="headerlink" href="#id1" title="永久链接至标题"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>操作</th>
+<th>含义</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>str1 + str2</td>
+<td>连接</td>
+<td>"TOMO" + "CAT" = "TOMOCAT"</td>
+</tr>
+<tr>
+<td>len(str)</td>
+<td>获取长度</td>
+<td>len("TOMOCAT") = 7</td>
+</tr>
+<tr>
+<td>str[i]</td>
+<td>下标访问</td>
+<td>"TOMOCAT"[2] = 'M'</td>
+</tr>
+</tbody>
+</table></section>
+<section id="id2">
+<h3>2. string特性<a class="headerlink" href="#id2" title="永久链接至标题"></a></h3>
+<ul class="simple">
+<li><p>字符串的内容不能在初始化后被修改</p></li>
+</ul>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">str</span> <span class="o">:=</span> <span class="s">&quot;TOMOCAT&quot;</span>
+<span class="nx">str</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="sc">&#39;M&#39;</span> <span class="c1">// 编译错误</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>string本质上是byte数组</p></li>
+</ul>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">str</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">{</span><span class="mi">84</span><span class="p">,</span> <span class="mi">79</span><span class="p">,</span> <span class="mi">77</span><span class="p">,</span> <span class="mi">79</span><span class="p">}</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;str:[%s]\n&quot;</span><span class="p">,</span> <span class="nx">str</span><span class="p">)</span>
+
+<span class="c1">// 输出:</span>
+<span class="c1">// str:[TOMO]</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>string使用UTF-8编码</p></li>
+</ul>
+<p>Go编译器支持UTF-8的源代码文件格式，这意味着源代码中的字符串可以包含非ANSI的字符。其中每个英文字母占用1个字节，每个中文汉字占用3个字节。</p>
+<ul class="simple">
+<li><p>双引号表示法与反引号表示法</p></li>
+</ul>
+<p>Go语言支持string两种表示方法，可以使用双引号或者反引号包裹字符串，前者被称为“解释型表示法”，后者被称为“原生型表示法”（所见即所得）。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">str1</span> <span class="o">:=</span> <span class="s">&quot;\\n&quot;</span>
+<span class="nx">str2</span> <span class="o">:=</span> <span class="s">`\n`</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;str1:[%s]\n&quot;</span><span class="p">,</span> <span class="nx">str1</span><span class="p">)</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;str2:[%s]\n&quot;</span><span class="p">,</span> <span class="nx">str2</span><span class="p">)</span>
+<span class="c1">// 输出:</span>
+<span class="c1">// str1:[\n]</span>
+<span class="c1">// str2:[\n]</span>
+
+<span class="cm">/* 可以通过%q格式控制符打印解释型字符 */</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;str3:[%q]\n&quot;</span><span class="p">,</span> <span class="s">`\t\n\r`</span><span class="p">)</span>
+<span class="c1">// 输出:</span>
+<span class="c1">// str3:[&quot;\\t\\n\\r&quot;]</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3>3. 遍历字符串<a class="headerlink" href="#id3" title="永久链接至标题"></a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">str</span> <span class="o">:=</span> <span class="s">&quot;TOMOCAT&quot;</span>
+
+<span class="cm">/* 以Unicode字符遍历 */</span>
+<span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">ch</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">str</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">ch</span><span class="p">)</span>  <span class="c1">// ch类型为rune</span>
+<span class="p">}</span>
+
+<span class="cm">/* 以字节数组遍历 */</span>
+<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">str</span><span class="p">);</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">str</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="byterune">
+<h2>byte与rune<a class="headerlink" href="#byterune" title="永久链接至标题"></a></h2>
+<p>byte（实际上是unit8的别名），表示范围0~255，代表ASCII表中的一个字符。rune占4个字节，表示一个Unicode字符。无论是使用byte还是rune定义一个字符时都应该使用单引号：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">ch1</span> <span class="kt">rune</span> <span class="p">=</span> <span class="sc">&#39;T&#39;</span>
+<span class="kd">var</span> <span class="nx">ch2</span> <span class="kt">byte</span> <span class="p">=</span> <span class="sc">&#39;O&#39;</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>byte本质上和unit8没有区别，rune和uint32也没有区别，仅仅是通过类型别名让它们更直观地表示一个字符。</p>
+</div></blockquote>
+<section id="id4">
+<h3>1. 打印单个字符<a class="headerlink" href="#id4" title="永久链接至标题"></a></h3>
+<blockquote>
+<div><p>单个字符的格式控制为<code class="docutils literal notranslate"><span class="pre">%c</span></code></p>
+</div></blockquote>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/* byte本质上等于uint8 */</span>
+<span class="kd">var</span> <span class="nx">ch1</span> <span class="kt">byte</span> <span class="p">=</span> <span class="mi">65</span>
+<span class="kd">var</span> <span class="nx">ch2</span> <span class="kt">uint8</span> <span class="p">=</span> <span class="mi">66</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;ch1:[%c], ch2:[%c]\n&quot;</span><span class="p">,</span> <span class="nx">ch1</span><span class="p">,</span> <span class="nx">ch2</span><span class="p">)</span>
+
+<span class="c1">// 输出:</span>
+<span class="c1">// ch1:[A], ch2:[B]</span>
+</pre></div>
+</div>
+</section>
+<section id="runebyte">
+<h3>2. rune和byte的大小<a class="headerlink" href="#runebyte" title="永久链接至标题"></a></h3>
+<blockquote>
+<div><p>rune占4个字节而byte占1个字节</p>
+</div></blockquote>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/* rune占4个字节, byte占1个字节 */</span>
+<span class="kd">var</span> <span class="nx">chByte</span> <span class="kt">byte</span> <span class="p">=</span> <span class="sc">&#39;A&#39;</span>
+<span class="kd">var</span> <span class="nx">chRune</span> <span class="kt">rune</span> <span class="p">=</span> <span class="sc">&#39;B&#39;</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;chByte size:[%d]\n&quot;</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Sizeof</span><span class="p">(</span><span class="nx">chByte</span><span class="p">))</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;chRune size:[%d]\n&quot;</span><span class="p">,</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Sizeof</span><span class="p">(</span><span class="nx">chRune</span><span class="p">))</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">chByte</span> <span class="nx">size</span><span class="p">:[</span><span class="mi">1</span><span class="p">]</span>
+<span class="nx">chRune</span> <span class="nx">size</span><span class="p">:[</span><span class="mi">4</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%87%E7%89%87.html" class="btn btn-neutral float-left" title="数组和切片" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="map.html" class="btn btn-neutral float-right" title="map" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

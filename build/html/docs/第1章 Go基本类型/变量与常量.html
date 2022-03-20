@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Golang变量与常量 &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" />
+    <link rel="next" title="Golang类型之间相互转换" href="%E7%B1%BB%E5%9E%8B%E4%B9%8B%E9%97%B4%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2.html" />
+    <link rel="prev" title="第1章 Go基本类型" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第1章 Go基本类型</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Golang变量与常量</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">变量</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">1. 变量声明</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#new">2. new函数创建指针变量</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id3">3. 匿名变量</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">常量</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5">1. 字面常量</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">2. 常量定义</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#iota">3. iota</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">4. 枚举</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="%E7%B1%BB%E5%9E%8B%E4%B9%8B%E9%97%B4%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2.html">Golang类型之间相互转换</a></li>
+<li class="toctree-l2"><a class="reference internal" href="%E6%95%B0%E5%80%BC%E7%B1%BB%E5%9E%8B.html">Golang数值类型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%87%E7%89%87.html">数组和切片</a></li>
+<li class="toctree-l2"><a class="reference internal" href="byte%E3%80%81rune%E5%92%8Cstring.html">Golang byte、rune和string</a></li>
+<li class="toctree-l2"><a class="reference internal" href="map.html">map</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第1章 Go基本类型</a> &raquo;</li>
+      <li>Golang变量与常量</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第1章 Go基本类型/变量与常量.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="golang">
+<h1>Golang变量与常量<a class="headerlink" href="#golang" title="永久链接至标题"></a></h1>
+<section id="id1">
+<h2>变量<a class="headerlink" href="#id1" title="永久链接至标题"></a></h2>
+<blockquote>
+<div><p>从本质上说，变量相当于是对一块数据空间的命名，程序可以定义一个变量来申请一块数据存储空间，之后可以通过引用变量名来使用这块存储空间。</p>
+</div></blockquote>
+<section id="id2">
+<h3>1. 变量声明<a class="headerlink" href="#id2" title="永久链接至标题"></a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/* 1) 隐式初始化: string为&quot;&quot;, int为0, bool为false, 指针为nil */</span>
+<span class="kd">var</span> <span class="nx">fooStr</span> <span class="kt">string</span>
+<span class="kd">var</span> <span class="nx">fooInt</span> <span class="kt">int</span>
+<span class="kd">var</span> <span class="nx">fooBool</span> <span class="kt">bool</span>
+
+<span class="cm">/* 2) 显式初始化 */</span>
+<span class="kd">var</span> <span class="nx">fooStr</span> <span class="kt">string</span> <span class="p">=</span> <span class="s">&quot;bar&quot;</span>
+<span class="kd">var</span> <span class="nx">fooInt</span> <span class="kt">int</span> <span class="p">=</span> <span class="mi">100</span>
+<span class="kd">var</span> <span class="nx">fooBool</span> <span class="kt">bool</span> <span class="p">=</span> <span class="kc">true</span>
+
+<span class="cm">/* 3) 类型自动推断 */</span>
+<span class="kd">var</span> <span class="nx">fooStr</span> <span class="p">=</span> <span class="s">&quot;bar&quot;</span>
+<span class="kd">var</span> <span class="nx">fooInt</span> <span class="p">=</span> <span class="mi">100</span>
+<span class="kd">var</span> <span class="nx">fooBool</span> <span class="p">=</span> <span class="kc">true</span>
+
+<span class="nx">fooStr</span> <span class="o">:=</span> <span class="s">&quot;bar&quot;</span>
+<span class="nx">fooInt</span> <span class="o">:=</span> <span class="mi">100</span>
+<span class="nx">fooBool</span> <span class="p">=</span> <span class="kc">true</span>
+
+<span class="cm">/* 4) 多个变量一起声明 */</span>
+<span class="kd">var</span> <span class="p">(</span>
+    <span class="nx">fooStr</span> <span class="kt">string</span>
+  	<span class="nx">fooInt</span> <span class="kt">int</span>
+  	<span class="nx">fooBool</span> <span class="kt">bool</span>
+<span class="p">)</span>
+
+<span class="cm">/* 5) 声明和初始化多个变量 */</span>
+<span class="nx">fooStr</span><span class="p">,</span> <span class="nx">fooInt</span> <span class="o">:=</span> <span class="s">&quot;bar&quot;</span><span class="p">,</span> <span class="mi">100</span> 
+</pre></div>
+</div>
+</section>
+<section id="new">
+<h3>2. new函数创建指针变量<a class="headerlink" href="#new" title="永久链接至标题"></a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/* 创建int类型的匿名变量并初始化为int类型的零值 */</span>
+<span class="nx">fooIntPtr</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>使用<code class="docutils literal notranslate"><span class="pre">new</span></code>函数和使用临时变量创建指针变量本质上并没有区分，相当于一个语法糖，例如下面两种写法是等价的：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/* 使用new函数 */</span>
+<span class="kd">func</span> <span class="nx">newInt</span><span class="p">()</span> <span class="o">*</span><span class="kt">int</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">new</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/* 使用临时变量 */</span>
+<span class="kd">func</span> <span class="nx">newInt2</span><span class="p">()</span> <span class="o">*</span><span class="kt">int</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">dummy</span> <span class="kt">int</span>
+    <span class="k">return</span> <span class="o">&amp;</span><span class="nx">dummy</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3>3. 匿名变量<a class="headerlink" href="#id3" title="永久链接至标题"></a></h3>
+<p>匿名变量也被称为占位符，用下划线表示。通过结合匿名变量和多重返回值可以使得代码更加简洁。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">GetMultiValue</span><span class="p">()</span> <span class="p">(</span><span class="nx">intValue</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">strValue</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="mi">10</span><span class="p">,</span> <span class="s">&quot;foo&quot;</span>
+<span class="p">}</span>
+
+<span class="cm">/* 仅获取int返回值 */</span>
+<span class="nx">intValue</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">GetMultiValue</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id4">
+<h2>常量<a class="headerlink" href="#id4" title="永久链接至标题"></a></h2>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Go</span></code>语言中常量指的是编译期间就已知且不可改变的值，常量可以是数值类型、布尔类型和字符串类型等。</p>
+</div></blockquote>
+<section id="id5">
+<h3>1. 字面常量<a class="headerlink" href="#id5" title="永久链接至标题"></a></h3>
+<p>字面常量<code class="docutils literal notranslate"><span class="pre">literal</span></code>指的是程序中硬编码的常量，例如：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mi">12</span>          <span class="c1">// 整数类型常量</span>
+<span class="mf">3.1415</span>       <span class="c1">// 浮点类型常量</span>
+<span class="mf">1.1</span><span class="o">+</span><span class="m">12i</span>      <span class="c1">// 复数类型常量</span>
+<span class="kc">true</span>         <span class="c1">// 布尔类型常量</span>
+<span class="s">&quot;bar&quot;</span>        <span class="c1">// 字符串常量</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p>其他语言的常量通常都有特定的类型，比如<code class="docutils literal notranslate"><span class="pre">-12</span></code>在<code class="docutils literal notranslate"><span class="pre">C</span></code>语言中表示<code class="docutils literal notranslate"><span class="pre">int</span></code>型常量，如果要指定一个值为<code class="docutils literal notranslate"><span class="pre">-12</span></code>的<code class="docutils literal notranslate"><span class="pre">long</span></code>常量，需要写成<code class="docutils literal notranslate"><span class="pre">-12l</span></code>。<code class="docutils literal notranslate"><span class="pre">Go</span></code>语言中的字面常量是无类型，只要这个常量在相应类型的值域范围内，那么就可以作为该类型的常量。比如<code class="docutils literal notranslate"><span class="pre">-12</span></code>的字面常量在<code class="docutils literal notranslate"><span class="pre">Go</span></code>语言中可以赋值给<code class="docutils literal notranslate"><span class="pre">int</span></code>、<code class="docutils literal notranslate"><span class="pre">int32</span></code>、<code class="docutils literal notranslate"><span class="pre">int64</span></code>、<code class="docutils literal notranslate"><span class="pre">float32</span></code>、<code class="docutils literal notranslate"><span class="pre">float64</span></code>、<code class="docutils literal notranslate"><span class="pre">complex64</span></code>和<code class="docutils literal notranslate"><span class="pre">complex128</span></code>等类型的变量。</p>
+</div></blockquote>
+</section>
+<section id="id6">
+<h3>2. 常量定义<a class="headerlink" href="#id6" title="永久链接至标题"></a></h3>
+<p>通过<code class="docutils literal notranslate"><span class="pre">const</span></code>关键字可以给字面常量指定一个友好的名字：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span> <span class="nx">Pi</span> <span class="kt">float64</span> <span class="p">=</span> <span class="mf">3.1415926535897</span>
+<span class="kd">const</span> <span class="nx">zero</span> <span class="p">=</span> <span class="mf">0.0</span>  <span class="c1">// 无类型浮点类型常量</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Go</span></code>语言中的常量定义可以不限定常量类型，此时它与字面常量一样是无类型常量。</p>
+</div></blockquote>
+</section>
+<section id="iota">
+<h3>3. iota<a class="headerlink" href="#iota" title="永久链接至标题"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">iota</span></code>在每一个<code class="docutils literal notranslate"><span class="pre">const</span></code>关键字出现时会被重置为0，在下一个<code class="docutils literal notranslate"><span class="pre">const</span></code>关键字出现之前，每出现一次<code class="docutils literal notranslate"><span class="pre">iota</span></code>，其所代表的数字会自增1。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span> <span class="p">(</span>          <span class="c1">// iota重置为0</span>
+	<span class="nx">c0</span> <span class="p">=</span> <span class="kc">iota</span>    <span class="c1">// 0</span>
+    <span class="nx">c1</span> <span class="p">=</span> <span class="kc">iota</span>    <span class="c1">// 1</span>
+    <span class="nx">c2</span> <span class="p">=</span> <span class="kc">iota</span>    <span class="c1">// 2</span>
+<span class="p">)</span>
+
+<span class="kd">const</span> <span class="p">(</span>
+	<span class="nx">a</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="kc">iota</span>   <span class="c1">// 1</span>
+    <span class="nx">b</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="kc">iota</span>   <span class="c1">// 2</span>
+    <span class="nx">c</span> <span class="p">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="kc">iota</span>   <span class="c1">// 4</span>
+<span class="p">)</span>
+
+<span class="cm">/* 简洁写法 */</span>
+<span class="kd">const</span> <span class="p">(</span>
+	<span class="nx">c0</span> <span class="p">=</span> <span class="kc">iota</span>     <span class="c1">// 0</span>
+    <span class="nx">c1</span>            <span class="c1">// 1</span>
+    <span class="nx">c2</span>            <span class="c1">// 2</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3>4. 枚举<a class="headerlink" href="#id7" title="永久链接至标题"></a></h3>
+<p>枚举指一系列相关的常量，<code class="docutils literal notranslate"><span class="pre">Go</span></code>语言不支持很多其他语言明确支持的<code class="docutils literal notranslate"><span class="pre">enum</span></code>关键字：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">const</span> <span class="p">(</span>
+	<span class="nx">Sunday</span> <span class="p">=</span> <span class="kc">iota</span>
+    <span class="nx">Monday</span>
+    <span class="nx">Tuesday</span>
+    <span class="nx">Wednesday</span>
+    <span class="nx">Thursday</span>
+    <span class="nx">Friday</span>
+    <span class="nx">Saturday</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="第1章 Go基本类型" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="%E7%B1%BB%E5%9E%8B%E4%B9%8B%E9%97%B4%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2.html" class="btn btn-neutral float-right" title="Golang类型之间相互转换" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

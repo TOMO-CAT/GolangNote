@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>for循环语句 &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC1%E7%AB%A0%20Go%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/index.html">第1章 Go基本类型</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>for循环语句</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第3章 Go流程控制/for循环语句.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="for">
+<h1>for循环语句<a class="headerlink" href="#for" title="永久链接至标题"></a></h1>
+<blockquote>
+<div><p>Go中的循环语句只支持<code class="docutils literal notranslate"><span class="pre">for</span></code>关键字，而不支持<code class="docutils literal notranslate"><span class="pre">while</span></code>和<code class="docutils literal notranslate"><span class="pre">do-while</span></code>结构。</p>
+</div></blockquote>
+<section id="id1">
+<h2>for循环写法<a class="headerlink" href="#id1" title="永久链接至标题"></a></h2>
+<section id="id2">
+<h3>1. 基本用法<a class="headerlink" href="#id2" title="永久链接至标题"></a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="mi">0</span>
+<span class="mi">1</span>
+<span class="mi">2</span>
+<span class="mi">3</span>
+<span class="mi">4</span>
+<span class="mi">5</span>
+<span class="mi">6</span>
+<span class="mi">7</span>
+<span class="mi">8</span>
+<span class="mi">9</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3>2. 接单个条件表达式<a class="headerlink" href="#id3" title="永久链接至标题"></a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">5</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+    <span class="nx">i</span><span class="o">++</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出</span>
+<span class="mi">0</span>
+<span class="mi">1</span>
+<span class="mi">2</span>
+<span class="mi">3</span>
+<span class="mi">4</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3>3. 无限循环<a class="headerlink" href="#id4" title="永久链接至标题"></a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+    <span class="nx">i</span><span class="o">++</span>
+    <span class="k">if</span> <span class="nx">i</span> <span class="p">&gt;</span> <span class="mi">5</span> <span class="p">{</span>
+        <span class="k">break</span>  <span class="c1">// 如果不加上退出循环的条件, 会导致死循环</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出</span>
+<span class="mi">0</span>
+<span class="mi">1</span>
+<span class="mi">2</span>
+<span class="mi">3</span>
+<span class="mi">4</span>
+<span class="mi">5</span>
+</pre></div>
+</div>
+</section>
+<section id="for-range">
+<h3>4. for-range语句<a class="headerlink" href="#for-range" title="永久链接至标题"></a></h3>
+<blockquote>
+<div><p>遍历一个可迭代对象时，可以通过<code class="docutils literal notranslate"><span class="pre">for-range</span></code>来实现，常见的可迭代对象包括数组、切片和字符串等。</p>
+</div></blockquote>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">intArr</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">}</span>
+<span class="c1">// range返回两个值: 索引和元素</span>
+<span class="k">for</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">item</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">intArr</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;index:%d, item:%d\n&quot;</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出</span>
+<span class="nx">index</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="nx">item</span><span class="p">:</span><span class="mi">10</span>
+<span class="nx">index</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="nx">item</span><span class="p">:</span><span class="mi">100</span>
+<span class="nx">index</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="nx">item</span><span class="p">:</span><span class="mi">1000</span>
+</pre></div>
+</div>
+<p>也可以使用一个变量来接收<code class="docutils literal notranslate"><span class="pre">range</span></code>的返回值，这时候接收到的是索引</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">intArr</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">1000</span><span class="p">}</span>
+<span class="k">for</span> <span class="nx">index</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">intArr</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;index:%d, item:%d\n&quot;</span><span class="p">,</span> <span class="nx">index</span><span class="p">,</span> <span class="nx">intArr</span><span class="p">[</span><span class="nx">index</span><span class="p">])</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出</span>
+<span class="nx">index</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="nx">item</span><span class="p">:</span><span class="mi">10</span>
+<span class="nx">index</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="nx">item</span><span class="p">:</span><span class="mi">100</span>
+<span class="nx">index</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span> <span class="nx">item</span><span class="p">:</span><span class="mi">1000</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id5">
+<h2>循环控制<a class="headerlink" href="#id5" title="永久链接至标题"></a></h2>
+<p>Go语言中的<code class="docutils literal notranslate"><span class="pre">for</span></code>循环同样支持<code class="docutils literal notranslate"><span class="pre">continue</span></code>和<code class="docutils literal notranslate"><span class="pre">break</span></code>来控制循环，而且可以根据标签来选择中断哪一个循环：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">JLoop</span><span class="p">:</span>
+<span class="k">for</span> <span class="nx">j</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="p">&lt;</span> <span class="mi">5</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="nx">i</span><span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="nx">i</span> <span class="p">&gt;</span> <span class="mi">5</span> <span class="p">{</span>
+            <span class="k">break</span> <span class="nx">JLoop</span>  <span class="c1">// 中断的是JLoop标签处的外层循环</span>
+        <span class="p">}</span>
+        <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出</span>
+<span class="mi">0</span>
+<span class="mi">1</span>
+<span class="mi">2</span>
+<span class="mi">3</span>
+<span class="mi">4</span>
+<span class="mi">5</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h2>不支持逗号分隔的多赋值语句<a class="headerlink" href="#id6" title="永久链接至标题"></a></h2>
+<p>Go语言的for循环和C++一样都支持在循环条件中定义和初始化变量，唯一的区别是，Go语言不支持以逗号为分隔符的多个赋值语句，必须使用“平行赋值”的方式来初始化多个变量：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="nx">a</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">}</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;before: %+v\n&quot;</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span>
+<span class="k">for</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">j</span><span class="p">;</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span> <span class="p">=</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">j</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">{</span>
+    <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">a</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="p">=</span> <span class="nx">a</span><span class="p">[</span><span class="nx">j</span><span class="p">],</span> <span class="nx">a</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span>
+<span class="p">}</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;after: %+v\n&quot;</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span>
+
+<span class="c1">// 输出</span>
+<span class="nx">before</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span><span class="p">]</span>
+<span class="nx">after</span><span class="p">:</span> <span class="p">[</span><span class="mi">6</span> <span class="mi">5</span> <span class="mi">4</span> <span class="mi">3</span> <span class="mi">2</span> <span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

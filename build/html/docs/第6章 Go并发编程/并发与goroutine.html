@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>并发与goroutine &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC1%E7%AB%A0%20Go%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/index.html">第1章 Go基本类型</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>并发与goroutine</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第6章 Go并发编程/并发与goroutine.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="goroutine">
+<h1>并发与goroutine<a class="headerlink" href="#goroutine" title="永久链接至标题"></a></h1>
+<section id="id1">
+<h2>并发与并行<a class="headerlink" href="#id1" title="永久链接至标题"></a></h2>
+<section id="id2">
+<h3>1. 并发的概念<a class="headerlink" href="#id2" title="永久链接至标题"></a></h3>
+<p>并发意味着程序在执行时有多个执行上下文，对应着多个调用栈。每一个进程在运行时都有自己的堆和栈，有一个完整的上下文，而操作系统在调度进程的时候，会保存被调度进程的上下文环境，等该进程获得时间片后，再恢复该进程的上下文到系统中。</p>
+</section>
+<section id="id3">
+<h3>2. 并发的场景<a class="headerlink" href="#id3" title="永久链接至标题"></a></h3>
+<p>并发编程的常用场景包括：</p>
+<ul class="simple">
+<li><p>灵敏响应的图形用户界面：用户进行操作后程序需要在后台执行复杂运算或者IO操作，为了不让用户感觉到程序的卡顿，我们需要让界面响应和后台运算同时运行</p></li>
+<li><p>高并发web服务：对于每个用户请求都有单独的线程进行响应</p></li>
+<li><p>计算机CPU从单内核发展成多内核，并发程序可以提高对计算机硬件的利用率</p></li>
+<li><p>由于IO操作耗时高，串行编程下IO操作会导致程序阻塞</p></li>
+</ul>
+<p>总结以下并发的优势在于：</p>
+<ul class="simple">
+<li><p>客观表示问题模型：例如高并发web服务</p></li>
+<li><p>利用CPU多内核优势：提高硬件利用率</p></li>
+<li><p>利用CPU与其他硬件设备固有的异步性：防止IO操作导致的程序阻塞</p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>3. 并发的实现模型<a class="headerlink" href="#id4" title="永久链接至标题"></a></h3>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>并发模型</th>
+<th>描述</th>
+<th>优势</th>
+<th>劣势</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>多进程</td>
+<td>在操作系统层面进行并发的基本模式</td>
+<td>简单、进程间互不影响</td>
+<td>系统开销大（所有进程都是由内核管理的）</td>
+</tr>
+<tr>
+<td>多线程</td>
+<td>在大部分操作系统上都属于系统层面的并发模式</td>
+<td>比多进程的开销小</td>
+<td>开销比较大，且在高并发模式下影响效率</td>
+</tr>
+<tr>
+<td>基于回调的非阻塞/异步IO</td>
+<td>高并发服务中使用多线程模式会很快耗尽服务器的内存和CPU资源，这种模式通过事件驱动的方式使用异步IO使服务器持续运转</td>
+<td>尽可能少用线程，降低开销</td>
+<td>比普通的多线程复杂，因为它做了流程分割，对于问题本身的反应不够自然</td>
+</tr>
+<tr>
+<td>协程</td>
+<td>本质上是一种用户态线程，不需要操作系统来进行抢占式调度，且在真正的实现中寄存于线程中</td>
+<td>系统开销极小，可以有效提高线程的任务并发性而避免多线程的缺点</td>
+<td>需要语言层面的支持，原生支持协程的语言比较少</td>
+</tr>
+</tbody>
+</table></section>
+</section>
+<section id="id5">
+<h2>协程<a class="headerlink" href="#id5" title="永久链接至标题"></a></h2>
+<blockquote>
+<div><p>与传统的系统级线程和进程相比，协程最大优势在于其”轻量级“，可以轻松创建上百万个而不会导致系统资源枯竭，而线程和进程通常最多也不能超过1万个。</p>
+</div></blockquote>
+<p>Golang在语言层面就支持协程goroutine，标准库提供的所有系统调用操作（包括所有同步IO操作）都会出让CPU给其他goroutine，从而让协程的切换管理不依赖于系统的线程和进程，也不依赖于CPU的核心数量。</p>
+<section id="id6">
+<h3>1. 使用协程<a class="headerlink" href="#id6" title="永久链接至标题"></a></h3>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// 开启协程执行foo函数</span>
+<span class="n">go</span><span class="w"> </span><span class="n">foo</span><span class="p">()</span><span class="w"></span>
+</pre></div>
+</div>
+<p>在函数前加上<code class="docutils literal notranslate"><span class="pre">go</span></code>关键字就会启动一个goroutine并发执行这个函数，当被调用的函数返回时这个goroutine也就自动结束了。</p>
+</section>
+<section id="id7">
+<h3>2. 协程注意事项<a class="headerlink" href="#id7" title="永久链接至标题"></a></h3>
+<ul class="simple">
+<li><p>如果协程执行的函数有返回值，那么这个返回值会被丢弃</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">main()</span></code>函数返回时，程序会直接退出而不等待其他goroutine结束</p></li>
+</ul>
+</section>
+<section id="id8">
+<h3>3. 出让时间片<a class="headerlink" href="#id8" title="永久链接至标题"></a></h3>
+<p>我们可以使用runtime包中的Gosched()函数控制当前goroutine主动出让时间片给其他goroutine。举个例子，在单核时我们执行如下代码时goroutine还未开始执行主函数就返回了，因此输出的全是Dog。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;fmt&quot;</span>
+	<span class="s">&quot;runtime&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">print20times</span><span class="p">(</span><span class="nx">str</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">20</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c1">// 设置单核心执行程序</span>
+	<span class="nx">runtime</span><span class="p">.</span><span class="nx">GOMAXPROCS</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="k">go</span> <span class="nx">print20times</span><span class="p">(</span><span class="s">&quot;Cat&quot;</span><span class="p">)</span>
+	<span class="nx">print20times</span><span class="p">(</span><span class="s">&quot;Dog&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+<span class="nx">Dog</span>
+</pre></div>
+</div>
+<p>我们可以使用Gosched()函数让主线程主动出让时间片，此时Dog与Cat就会交错输出：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="p">(</span>
+	<span class="s">&quot;fmt&quot;</span>
+	<span class="s">&quot;runtime&quot;</span>
+<span class="p">)</span>
+
+<span class="kd">func</span> <span class="nx">print20times</span><span class="p">(</span><span class="nx">str</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">20</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="nx">runtime</span><span class="p">.</span><span class="nx">Gosched</span><span class="p">()</span>
+		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c1">// 设置单核心执行程序</span>
+	<span class="nx">runtime</span><span class="p">.</span><span class="nx">GOMAXPROCS</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="k">go</span> <span class="nx">print20times</span><span class="p">(</span><span class="s">&quot;Cat&quot;</span><span class="p">)</span>
+	<span class="nx">print20times</span><span class="p">(</span><span class="s">&quot;Dog&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+<span class="nx">Cat</span>
+<span class="nx">Dog</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="永久链接至标题"></a></h2>
+<p>[1] https://www.cnblogs.com/coder-programming/p/10595804.html</p>
+<p>[2] https://www.cnblogs.com/sdyxlyb22/p/11604606.html</p>
+<p>[3] https://www.jianshu.com/p/4eb593b3a38a</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>作用域和可见性 &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC1%E7%AB%A0%20Go%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/index.html">第1章 Go基本类型</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>作用域和可见性</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第7章 Go语言特性/作用域和可见性.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="id1">
+<h1>作用域和可见性<a class="headerlink" href="#id1" title="永久链接至标题"></a></h1>
+<section id="id2">
+<h2>显式语句块和隐式语句块<a class="headerlink" href="#id2" title="永久链接至标题"></a></h2>
+<section id="id3">
+<h3>1. 显式语句块<a class="headerlink" href="#id3" title="永久链接至标题"></a></h3>
+<p>用花括号<code class="docutils literal notranslate"><span class="pre">{}</span></code>包含的语句块是显式语句块。</p>
+</section>
+<section id="id4">
+<h3>2. 隐式语句块<a class="headerlink" href="#id4" title="永久链接至标题"></a></h3>
+<ul class="simple">
+<li><p>主语句块：包括所有源码，对应内置作用域</p></li>
+<li><p>包语句块：包含该包中的所有源码，对应包级作用域</p></li>
+<li><p>文件语句块：包括该文件的所有源码，对应文件级作用域</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">for</span></code>、<code class="docutils literal notranslate"><span class="pre">if</span></code>和<code class="docutils literal notranslate"><span class="pre">switch</span></code>等语句本身也在它自身的隐式语句块中，对应局部作用域</p></li>
+</ul>
+<p>关于第四点的详细说明：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="c1">// for循环结束后无法再使用循环变量i</span>
+<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// if语句中声明变量, 判断完后也不可再使用变量i</span>
+<span class="k">if</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">20</span> <span class="p">{</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// switch语句中声明变量, 判断完后也不可再使用变量i</span>
+<span class="k">switch</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span> <span class="p">{</span>
+<span class="k">case</span> <span class="mi">1</span><span class="p">:</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">case</span> <span class="mi">10</span><span class="p">:</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="k">default</span><span class="p">:</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;unexpected value&quot;</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id5">
+<h2>作用域<a class="headerlink" href="#id5" title="永久链接至标题"></a></h2>
+<blockquote>
+<div><p>作用域和生命周期的区别：</p>
+<ul class="simple">
+<li><p>声明语句的作用域是编译时属性，对应的是源代码的一段文本区域</p></li>
+<li><p>生命周期是运行时属性，表明在此时间区域内可以被程序的其他部分所引用</p></li>
+</ul>
+</div></blockquote>
+<section id="id6">
+<h3>1. 四种作用域<a class="headerlink" href="#id6" title="永久链接至标题"></a></h3>
+<p>根据声明位置的不同，作用域包含如下四种类型：</p>
+<ul class="simple">
+<li><p>内置作用域：不需要自己声明，所有的关键字、内置类型和内置函数都具有全局作用域</p></li>
+<li><p>包级作用域：必须函数外声明，在该包内的所有文件都可访问</p></li>
+<li><p>文件级作用域：单个文件中通过<code class="docutils literal notranslate"><span class="pre">import</span></code>导入的包名，只在该文件内可访问</p></li>
+<li><p>局部作用域：在自己的语句块内声明（包括函数、<code class="docutils literal notranslate"><span class="pre">for</span></code>、<code class="docutils literal notranslate"><span class="pre">if</span></code>和<code class="docutils literal notranslate"><span class="pre">switch</span></code>等语句块或者自定义的<code class="docutils literal notranslate"><span class="pre">{}</span></code>语句块），只在语句块内可访问</p></li>
+</ul>
+</section>
+<section id="id7">
+<h3>2. 作用域与可见性<a class="headerlink" href="#id7" title="永久链接至标题"></a></h3>
+<blockquote>
+<div><p>全局变量：在<code class="docutils literal notranslate"><span class="pre">main</span></code>函数调用前初始化，全局可见</p>
+<p>局部变量：在函数内部或者<code class="docutils literal notranslate"><span class="pre">if</span></code>、<code class="docutils literal notranslate"><span class="pre">for</span></code>等语句块有效，使用之后外部不可见</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>内层作用域可访问外层作用域</p></li>
+<li><p>同一层级的作用域互相隔离</p></li>
+<li><p>内层作用域内声明的变量会覆盖外层作用域声明的同名变量</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

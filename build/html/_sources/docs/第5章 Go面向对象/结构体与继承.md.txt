@@ -1,0 +1,141 @@
+# 结构体与继承
+
+`Go`的结构体`struct`和其他语言的类`class`类似，但是放弃了包括继承在内的大量面向对象特性。
+
+## 定义
+
+和C++类似，我们可以定义结构体的数据成员和方法成员。
+
+```go
+// 矩形
+type Rect struct {
+    width, height float64
+}
+
+// 定义成员方法输出矩阵面积
+func (r *Rect) Area() float64 {
+    return r.width * r.height
+}
+```
+
+## 可见性
+
+要使某个符号对其他包`package`可见，需要将该符号（结构体内的数据成员或者方法成员的名称）定义为以大写字母开头。
+
+> Q：为什么Go语言中不需要有`friend`关键字？
+
+> A：需要注意的是，Go语言中符号的可见性是包一级而不是类型一级的。尽管一个结构体的方法成员的符号是小写的，但同一个包的其他类型也可以访问到它。这样的可访问性控制很粗糙，但是非常实用。因为如果Go语言符号的可访问性是类型一级的，少不了还要加上`friend`这样的关键字，以表示两个类是朋友关系，可以访问彼此的私有成员。
+
+## 初始化
+
+我们可以通过如下方法创建并初始化`Rect`类型：
+
+```go
+func main() {
+	r1 := new(Rect)
+	r2 := &Rect{}
+	r3 := &Rect{10, 20}
+	r4 := &Rect{width: 20, height: 10}
+	
+	fmt.Println("r1: ", r1)
+	fmt.Println("r2: ", r2)
+	fmt.Println("r3: ", r3)
+	fmt.Println("r4: ", r4)
+
+	return
+}
+
+// 输出:
+r1:  &{0 0}
+r2:  &{0 0}
+r3:  &{10 20}
+r4:  &{20 10}
+```
+
+> 在Go语言中未进行显式初始化的变量都会被初始化为该类型的零值，例如`bool`类型零值时`false`，`int`类型零值是0，`string`类型的零值是空字符串。
+
+Go语言中不存在构造函数的概念，对象的创建通常交给一个全局的`NewXXX()`函数来完成：
+
+```go
+func NewRect(width, height float64) *Rect {
+    retutn &Rect{width, height}
+}
+```
+
+## 方法中对象的参数传递方式
+
+#### 1. 指针传递
+
+前面我们定义了成员方法，其中`Area`是方法名，`Rect`是方法的接收者，`r`表示对应的`Rect`实例，`*`号表示方法中对象的参数传递方式是指针传递：
+
+```go
+// 指针传递对象
+func (r *Rect) Area() float64 {
+    return r.width * r.height
+}
+```
+
+如果需要修改对象必须以指针传递，这有时候会是一个额外成本，因为对象有时很小（比如4字节），这时候用指针传递并不划算。
+
+> 只有在你需要修改对象时，才必须使用指针。
+
+#### 2. 值传递
+
+```go
+// 值传递对象
+func (r Rect) Area() float64 {
+    return r.width * r.height
+}
+```
+
+#### 3. 总结
+
+* 当你需要在方法内部修改对象时必须以指针传递
+* 当结构体较大时，指针传递可以提升性能
+* 当对象较小时（比如4字节），使用值传递可以提升性能
+* 为了保持代码一致性，建议统一使用指针传递
+
+## 匿名组合实现继承
+
+Go语言本身不支持继承，但是我们通过匿名组合的方式变相实现继承的效果。
+
+举个例子，我们有一个基类表示书籍：
+
+```go
+/*
+书籍
+ */
+type Book struct {
+	Name string
+	Author string
+	Price float64
+}
+
+func (book *Book) GetBookName() string {
+	return book.Name
+}
+
+func (book *Book) GetBookPrice() float64 {
+	return book.Price
+} 
+```
+
+再构造一个”故事书“的结构体，作为派生类”继承“基类的属性和方法：
+
+```go
+/*
+故事书
+*/
+type StoryBook struct {
+	storyNum int
+	Book     // 匿名字段
+}
+
+// 改写基类的GetBookPrice方法, 故事书统一打3折
+func (storyBook *StoryBook) GetBookPrice() float64 {
+	return storyBook.Price * 0.3
+}
+```
+
+在派生类`StoryBook`中没有改写基类的方法时，相应的方法就直接被继承（比如`GetBookName`方法）。也可以继承并改写方法（比如`GetBookPrice`方法）。
+

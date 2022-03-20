@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Golang数值类型 &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" />
+    <link rel="next" title="数组和切片" href="%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%87%E7%89%87.html" />
+    <link rel="prev" title="Golang类型之间相互转换" href="%E7%B1%BB%E5%9E%8B%E4%B9%8B%E9%97%B4%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">第1章 Go基本类型</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="%E5%8F%98%E9%87%8F%E4%B8%8E%E5%B8%B8%E9%87%8F.html">Golang变量与常量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="%E7%B1%BB%E5%9E%8B%E4%B9%8B%E9%97%B4%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2.html">Golang类型之间相互转换</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Golang数值类型</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">布尔型</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">整型</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id3">1. 整型类型分类</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#intint32-int64">2. int和int32/int64是两种不同类型</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">3. 位运算</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">浮点型</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#float64">1. 浮点型字面量自动推导为float64</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">2. 浮点型比较</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">复数类型</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%87%E7%89%87.html">数组和切片</a></li>
+<li class="toctree-l2"><a class="reference internal" href="byte%E3%80%81rune%E5%92%8Cstring.html">Golang byte、rune和string</a></li>
+<li class="toctree-l2"><a class="reference internal" href="map.html">map</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="index.html">第1章 Go基本类型</a> &raquo;</li>
+      <li>Golang数值类型</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第1章 Go基本类型/数值类型.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="golang">
+<h1>Golang数值类型<a class="headerlink" href="#golang" title="永久链接至标题"></a></h1>
+<section id="id1">
+<h2>布尔型<a class="headerlink" href="#id1" title="永久链接至标题"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Go</span></code>语言中布尔类型不能接受其他类型的赋值，不支持自动或者强制的类型转换。例如：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/* 编译错误 */</span>
+<span class="kd">var</span> <span class="nx">fooBool</span> <span class="kt">bool</span>
+<span class="nx">fooBool</span> <span class="p">=</span> <span class="mi">1</span>         <span class="c1">// 编译错误</span>
+<span class="nx">fooBool</span> <span class="p">=</span> <span class="nb">bool</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>   <span class="c1">// 编译错误</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h2>整型<a class="headerlink" href="#id2" title="永久链接至标题"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Go</span></code>语言整型类型如下：</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>数据类型</th>
+<th>有/无符号</th>
+<th>长度（字节）</th>
+<th>值范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>int</td>
+<td>有</td>
+<td>平台相关</td>
+<td>平台相关</td>
+</tr>
+<tr>
+<td>int8</td>
+<td>有</td>
+<td>1</td>
+<td>-128 ~ 127</td>
+</tr>
+<tr>
+<td>int16</td>
+<td>有</td>
+<td>2</td>
+<td>-32768 ~ 32767</td>
+</tr>
+<tr>
+<td>int32</td>
+<td>有</td>
+<td>4</td>
+<td>-2147484648 ~ 2147483647</td>
+</tr>
+<tr>
+<td>int64</td>
+<td>有</td>
+<td>8</td>
+<td>-9223372036854775808 ~ 9223372036854775807</td>
+</tr>
+<tr>
+<td>uint</td>
+<td>无</td>
+<td>平台相关</td>
+<td>平台相关</td>
+</tr>
+<tr>
+<td>uint8（即byte）</td>
+<td>无</td>
+<td>1</td>
+<td>0 ~ 255</td>
+</tr>
+<tr>
+<td>uint16</td>
+<td>无</td>
+<td>2</td>
+<td>0 ~ 65535</td>
+</tr>
+<tr>
+<td>uint32</td>
+<td>无</td>
+<td>4</td>
+<td>0 ~ 4294967295</td>
+</tr>
+<tr>
+<td>uint64</td>
+<td>无</td>
+<td>8</td>
+<td>0 ~ 18446744073709551615</td>
+</tr>
+<tr>
+<td>uintptr</td>
+<td></td>
+<td>同指针</td>
+<td>32位平台下为4字节，64位平台下为8字节</td>
+</tr>
+</tbody>
+</table><section id="id3">
+<h3>1. 整型类型分类<a class="headerlink" href="#id3" title="永久链接至标题"></a></h3>
+<ul class="simple">
+<li><p>前缀是否带<code class="docutils literal notranslate"><span class="pre">u</span></code>：带<code class="docutils literal notranslate"><span class="pre">u</span></code>表示无符号类型，不带<code class="docutils literal notranslate"><span class="pre">u</span></code>表示有符号类型</p></li>
+<li><p>后缀数值：<code class="docutils literal notranslate"><span class="pre">8</span></code>、<code class="docutils literal notranslate"><span class="pre">16</span></code>、<code class="docutils literal notranslate"><span class="pre">32</span></code>和<code class="docutils literal notranslate"><span class="pre">64</span></code>这些后缀表示类型长度是几个<code class="docutils literal notranslate"><span class="pre">bit</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">int</span></code>和<code class="docutils literal notranslate"><span class="pre">uint</span></code>平台相关：方便跨平台，但是在二进制传输等场景下应该避免使用（使用更加精确的<code class="docutils literal notranslate"><span class="pre">int32</span></code>和<code class="docutils literal notranslate"><span class="pre">int64</span></code>）</p></li>
+</ul>
+</section>
+<section id="intint32-int64">
+<h3>2. int和int32/int64是两种不同类型<a class="headerlink" href="#intint32-int64" title="永久链接至标题"></a></h3>
+<p>需要注意在<code class="docutils literal notranslate"><span class="pre">Go</span></code>语言中，<code class="docutils literal notranslate"><span class="pre">int</span></code>和<code class="docutils literal notranslate"><span class="pre">int32/int64</span></code>会被认为是两种不同的类型，编译器并不会帮你做自动类型转换：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/* 编译错误 */</span>
+<span class="kd">var</span> <span class="nx">valueInt32</span> <span class="kt">int32</span>
+<span class="nx">valueInt</span> <span class="o">:=</span> <span class="mi">64</span>                  <span class="c1">// value会被编译器自动推断为int类型</span>
+<span class="nx">valueint32</span> <span class="p">=</span> <span class="nx">valueInt</span>           <span class="c1">// 编译错误: 不支持自动类型转换</span>
+
+<span class="nx">valueInt32</span> <span class="p">=</span> <span class="nb">int32</span><span class="p">(</span><span class="nx">valueInt</span><span class="p">)</span>    <span class="c1">// 编译通过: 支持强制类型转换, 需要注意精度损失和值溢出的问题</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3>3. 位运算<a class="headerlink" href="#id4" title="永久链接至标题"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">Go</span></code>语言的大多数位运算符都与<code class="docutils literal notranslate"><span class="pre">C</span></code>语言类似，除了取反在<code class="docutils literal notranslate"><span class="pre">C</span></code>语言中是<code class="docutils literal notranslate"><span class="pre">~x</span></code>，而在<code class="docutils literal notranslate"><span class="pre">Go</span></code>语言中是<code class="docutils literal notranslate"><span class="pre">^x</span></code>。</p>
+<table border="1" class="docutils">
+<thead>
+<tr>
+<th>运算</th>
+<th>含义</th>
+<th>样例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>x &lt;&lt; y</td>
+<td>左移</td>
+<td>124 &lt;&lt; 2 = 494</td>
+</tr>
+<tr>
+<td>x &gt;&gt; y</td>
+<td>右移</td>
+<td>124 &gt;&gt; 2 = 31</td>
+</tr>
+<tr>
+<td>x ^ y</td>
+<td>异或</td>
+<td>124 ^ 2 = 126</td>
+</tr>
+<tr>
+<td>x &amp; y</td>
+<td>与</td>
+<td>124 &amp; 2 = 0</td>
+</tr>
+<tr>
+<td>x | y</td>
+<td>或</td>
+<td>124 | 2 = 126</td>
+</tr>
+<tr>
+<td>^x</td>
+<td>取反</td>
+<td>^2 = -3</td>
+</tr>
+</tbody>
+</table></section>
+</section>
+<section id="id5">
+<h2>浮点型<a class="headerlink" href="#id5" title="永久链接至标题"></a></h2>
+<blockquote>
+<div><p><code class="docutils literal notranslate"><span class="pre">Go</span></code>语言中的浮点类型采用<code class="docutils literal notranslate"><span class="pre">IEEE-754</span></code>标准，关于浮点数的底层存储原理详见文章：<a class="reference external" href="https://zhuanlan.zhihu.com/p/269619376">浮点数的底层原理和精度损失问题</a></p>
+</div></blockquote>
+<p><code class="docutils literal notranslate"><span class="pre">Go</span></code>语言定义了<code class="docutils literal notranslate"><span class="pre">float32</span></code>和<code class="docutils literal notranslate"><span class="pre">float64</span></code>两种精度的浮点数，相当于<code class="docutils literal notranslate"><span class="pre">C</span></code>语言中的<code class="docutils literal notranslate"><span class="pre">float</span></code>和<code class="docutils literal notranslate"><span class="pre">double</span></code>类型。</p>
+<section id="float64">
+<h3>1. 浮点型字面量自动推导为float64<a class="headerlink" href="#float64" title="永久链接至标题"></a></h3>
+<p>需要注意的是，浮点型字面量（无类型）赋值给一个变量时会被自动推导为<code class="docutils literal notranslate"><span class="pre">float64</span></code>，比如：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="cm">/* valueFloat会被自动推导为float64 */</span>
+<span class="nx">valueFloat</span> <span class="o">:=</span> <span class="mf">3.14</span> 
+
+<span class="kd">var</span> <span class="nx">valueFloat32</span> <span class="kt">float32</span>
+<span class="nx">valueFloat32</span> <span class="p">=</span> <span class="nb">float32</span><span class="p">(</span><span class="nx">valueFloat</span><span class="p">)</span>  <span class="c1">// 只能使用强制类型转换</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3>2. 浮点型比较<a class="headerlink" href="#id6" title="永久链接至标题"></a></h3>
+<p>由于浮点型不是一种精确（十进制和二进制转换之间存在误差）的表达方式，像整形一样直接使用<code class="docutils literal notranslate"><span class="pre">==</span></code>比较两个浮点数是否相同是行不通的，可以使用用户自定义函数：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="s">&quot;math&quot;</span>
+
+<span class="cm">/* p为用户自定义精度, 比如0.00001 */</span>
+<span class="kd">func</span> <span class="nx">IsFloatEqual</span><span class="p">(</span><span class="nx">f1</span><span class="p">,</span> <span class="nx">f2</span><span class="p">,</span> <span class="nx">p</span> <span class="kt">float64</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">math</span><span class="p">.</span><span class="nx">Abs</span><span class="p">(</span><span class="nx">f1</span><span class="o">-</span><span class="nx">f2</span><span class="p">)</span> <span class="p">&lt;</span> <span class="nx">p</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id7">
+<h2>复数类型<a class="headerlink" href="#id7" title="永久链接至标题"></a></h2>
+<p>复数由两个浮点数构成，一个表示实部<code class="docutils literal notranslate"><span class="pre">real</span></code>，另一个表示虚部<code class="docutils literal notranslate"><span class="pre">imag</span></code>：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">valueComplex</span> <span class="kt">complex64</span>  <span class="c1">// 由2个float32构成的复数</span>
+
+<span class="nx">valueComplex</span> <span class="p">=</span> <span class="mf">3.2</span> <span class="o">+</span> <span class="m">12i</span>
+<span class="nx">valueComlex2</span> <span class="o">:=</span> <span class="mf">3.2</span> <span class="o">+</span> <span class="m">12i</span>         <span class="c1">// valueComlex2是complex128类型</span>
+<span class="nx">valueComlex3</span> <span class="o">:=</span> <span class="nb">complex</span><span class="p">(</span><span class="mf">3.2</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>  <span class="c1">// valueComlex3是complex128类型</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="%E7%B1%BB%E5%9E%8B%E4%B9%8B%E9%97%B4%E7%9B%B8%E4%BA%92%E8%BD%AC%E6%8D%A2.html" class="btn btn-neutral float-left" title="Golang类型之间相互转换" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> 上一页</a>
+        <a href="%E6%95%B0%E7%BB%84%E5%92%8C%E5%88%87%E7%89%87.html" class="btn btn-neutral float-right" title="数组和切片" accesskey="n" rel="next">下一页 <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

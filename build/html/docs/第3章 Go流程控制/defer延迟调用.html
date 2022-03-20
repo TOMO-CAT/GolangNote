@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="zh-CN" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>defer延迟调用语句 &mdash; GolangNote v1.0 文档</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/translations.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="../../genindex.html" />
+    <link rel="search" title="搜索" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> GolangNote
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="在文档中搜索" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../%E7%AC%AC1%E7%AB%A0%20Go%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B/index.html">第1章 Go基本类型</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../README.html">README</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">GolangNote</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>defer延迟调用语句</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/docs/第3章 Go流程控制/defer延迟调用.md.txt" rel="nofollow"> 查看页面源码</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="defer">
+<h1>defer延迟调用语句<a class="headerlink" href="#defer" title="永久链接至标题"></a></h1>
+<section id="id1">
+<h2>用法<a class="headerlink" href="#id1" title="永久链接至标题"></a></h2>
+<section id="id2">
+<h3>1. 直接接函数<a class="headerlink" href="#id2" title="永久链接至标题"></a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">myFunc</span><span class="p">(</span><span class="nx">srcFilePath</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">srcFile</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nx">Open</span><span class="p">(</span><span class="nx">srcFilePath</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+	<span class="k">defer</span> <span class="nx">srcFile</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>  <span class="c1">// 保证srcFile被正常关闭</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h3>2. 接匿名函数<a class="headerlink" href="#id3" title="永久链接至标题"></a></h3>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// 需要在return后处理的操作</span>
+<span class="p">}</span> <span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id4">
+<h2>即时求值的变量快照<a class="headerlink" href="#id4" title="永久链接至标题"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">defer</span></code>的定位是延迟调用语句，此时传递给函数内的变量，不应该受到后续程序的影响：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="c1">// 即使我们对myStr重新赋值, 在return后调用defer函数仍然使用未被赋值的变量值</span>
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">myStr</span> <span class="o">:=</span> <span class="s">&quot;defer TOMO&quot;</span>
+    <span class="k">defer</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">myStr</span><span class="p">)</span>  <span class="c1">// 输出: defer TOMO</span>
+
+    <span class="nx">myStr</span> <span class="p">=</span> <span class="s">&quot;CAT&quot;</span>
+    <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nx">myStr</span><span class="p">)</span> <span class="c1">// 输出: CAT</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出</span>
+<span class="nx">CAT</span>
+<span class="k">defer</span> <span class="nx">TOMO</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h2>多个defer反序调用<a class="headerlink" href="#id5" title="永久链接至标题"></a></h2>
+<p>一个函数中可以存在多个<code class="docutils literal notranslate"><span class="pre">defer</span></code>语句，这些<code class="docutils literal notranslate"><span class="pre">defer</span></code>语句的调用遵循先进后出的原则，即最后一个<code class="docutils literal notranslate"><span class="pre">defer</span></code>语句最先被执行。</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">defer</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;TOMO&quot;</span><span class="p">)</span>
+	<span class="k">defer</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;CAT&quot;</span><span class="p">)</span>
+	<span class="k">defer</span> <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="s">&quot;TOMO-CAT&quot;</span><span class="p">)</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出</span>
+<span class="nx">TOMO</span><span class="o">-</span><span class="nx">CAT</span>
+<span class="nx">CAT</span>
+<span class="nx">TOMO</span>
+</pre></div>
+</div>
+</section>
+<section id="deferreturn">
+<h2>defer在return后再执行<a class="headerlink" href="#deferreturn" title="永久链接至标题"></a></h2>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">MyStr</span> <span class="p">=</span> <span class="s">&quot;TOMO-CAT&quot;</span>
+
+<span class="kd">func</span> <span class="nx">testFunc</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nx">MyStr</span> <span class="p">=</span> <span class="s">&quot;CAT&quot;</span>
+	<span class="p">}()</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;testFunc::MyStr:[%s]\n&quot;</span><span class="p">,</span> <span class="nx">MyStr</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nx">MyStr</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">newStr</span> <span class="o">:=</span> <span class="nx">testFunc</span><span class="p">()</span>  <span class="c1">// newStr接受到的是TOMO-CAT, 此时还未被defer函数修改为CAT</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;main::MyStr:[%s]\n&quot;</span><span class="p">,</span> <span class="nx">MyStr</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;main::newStr:[%s]\n&quot;</span><span class="p">,</span> <span class="nx">newStr</span><span class="p">)</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出</span>
+<span class="nx">testFunc</span><span class="p">::</span><span class="nx">MyStr</span><span class="p">:[</span><span class="nx">TOMO</span><span class="o">-</span><span class="nx">CAT</span><span class="p">]</span>
+<span class="nx">main</span><span class="p">::</span><span class="nx">MyStr</span><span class="p">:[</span><span class="nx">CAT</span><span class="p">]</span>
+<span class="nx">main</span><span class="p">::</span><span class="nx">newStr</span><span class="p">:[</span><span class="nx">TOMO</span><span class="o">-</span><span class="nx">CAT</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="panicdefer">
+<h2>panic后的defer不可用<a class="headerlink" href="#panicdefer" title="永久链接至标题"></a></h2>
+<p>如果panic的位置在defer函数之后，那么defer函数可以捕获panic：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;panic, err:%v\n&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}()</span>
+	
+	<span class="kd">var</span> <span class="nx">pi</span> <span class="o">*</span><span class="kt">int</span> <span class="p">=</span> <span class="kc">nil</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="o">*</span><span class="nx">pi</span><span class="p">)</span>
+	
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">panic</span><span class="p">,</span> <span class="nx">err</span><span class="p">:</span><span class="nx">runtime</span> <span class="kt">error</span><span class="p">:</span> <span class="nx">invalid</span> <span class="nx">memory</span> <span class="nx">address</span> <span class="nx">or</span> <span class="kc">nil</span> <span class="nx">pointer</span> <span class="nx">dereference</span>
+</pre></div>
+</div>
+<p>如果panic的位置在defer函数之前，那么该panic无法被defer函数捕获：</p>
+<div class="highlight-go notranslate"><div class="highlight"><pre><span></span><span class="kn">package</span> <span class="nx">main</span>
+
+<span class="kn">import</span> <span class="s">&quot;fmt&quot;</span>
+
+<span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">pi</span> <span class="o">*</span><span class="kt">int</span> <span class="p">=</span> <span class="kc">nil</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="o">*</span><span class="nx">pi</span><span class="p">)</span>
+	
+	<span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nb">recover</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;panic, err:%v\n&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}()</span>
+	
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="c1">// 输出:</span>
+<span class="nx">panic</span><span class="p">:</span> <span class="nx">runtime</span> <span class="kt">error</span><span class="p">:</span> <span class="nx">invalid</span> <span class="nx">memory</span> <span class="nx">address</span> <span class="nx">or</span> <span class="kc">nil</span> <span class="nx">pointer</span> <span class="nx">dereference</span>
+<span class="p">[</span><span class="nx">signal</span> <span class="nx">SIGSEGV</span><span class="p">:</span> <span class="nx">segmentation</span> <span class="nx">violation</span> <span class="nx">code</span><span class="p">=</span><span class="mh">0x1</span> <span class="nx">addr</span><span class="p">=</span><span class="mh">0x0</span> <span class="nx">pc</span><span class="p">=</span><span class="mh">0x48eac1</span><span class="p">]</span>
+
+<span class="nx">goroutine</span> <span class="mi">1</span> <span class="p">[</span><span class="nx">running</span><span class="p">]:</span>
+<span class="nx">main</span><span class="p">.</span><span class="nx">main</span><span class="p">()</span>
+	<span class="o">/</span><span class="nx">box</span><span class="o">/</span><span class="nx">main</span><span class="p">.</span><span class="k">go</span><span class="p">:</span><span class="mi">7</span> <span class="o">+</span><span class="mh">0x31</span>
+
+<span class="nx">Exited</span> <span class="nx">with</span> <span class="kt">error</span> <span class="nx">status</span> <span class="mi">2</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; 版权所有 2021, TOMOCAT.</p>
+  </div>
+
+  利用 <a href="https://www.sphinx-doc.org/">Sphinx</a> 构建，使用了 
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">主题</a>
+    由 <a href="https://readthedocs.org">Read the Docs</a>开发.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
